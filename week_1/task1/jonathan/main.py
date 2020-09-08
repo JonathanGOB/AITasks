@@ -1,4 +1,3 @@
-# Using Postorder (Left, Right, Root)
 class Node:
     data = None
     parent = None
@@ -27,7 +26,7 @@ def gwcgenerator(parent):
             continue
         child = parent.add_child(Node(move_right(parent.data, data[0][e + 1]), parent))
         if check_failure(child.data):
-            gwcgenerator(child.parent)
+            gwcgenerator(parent)
         if len(child.data.split('|')[1]) == 4:
             found.append(child)
             gwcgenerator(parent)
@@ -65,18 +64,14 @@ def move_right(whole_string, character):
     whole_string = whole_string[:position] + whole_string[position + 1:] + character
     position = whole_string.find("F")
     whole_string = whole_string[:position] + whole_string[position + 1:] + "F"
-    #print(whole_string)
     return whole_string
-
 
 def move_left(whole_string, character):
     position = whole_string.find(character)
     whole_string = character+ whole_string[:position] + whole_string[position + 1:]
     position = whole_string.find("F")
     whole_string = "F" + whole_string[:position] + whole_string[position + 1:]
-    #print(whole_string)
     return whole_string
-
 
 if __name__ == "__main__":
     found = gwcgenerator(Node('FWCG|'))
