@@ -21,10 +21,10 @@ found = []
 
 def gwcgenerator(parent):
     data = parent.data.split('|')
-    for e in range(len(data[0]) - 1):
-        if move_right(parent.data, data[0][e + 1]) in parent.get_children():
+    for e in data[0]:
+        if move_right(parent.data, e) in parent.get_children() or e == 'F':
             continue
-        child = parent.add_child(Node(move_right(parent.data, data[0][e + 1]), parent))
+        child = parent.add_child(Node(move_right(parent.data, e), parent))
         if check_failure(child.data):
             continue
         if len(child.data.split('|')[1]) == 4:
@@ -32,22 +32,18 @@ def gwcgenerator(parent):
             gwcgenerator(parent)
             continue
         child_data = child.data.split('|')
-        for i in range(len(child_data[1])):
-            if move_left(child.data, child_data[1][i]) in child.get_children():
+        for i in child_data[1]:
+            if move_left(child.data, i) in child.get_children():
                 continue
-            child1 = child.add_child(Node(move_left(child.data, child_data[1][i]), child))
+            child1 = child.add_child(Node(move_left(child.data, i), child))
             if not check_failure(child1.data):
                 gwcgenerator(child1)
-            if check_failure(child1.data):
-                continue
     return found
 
 def print_path(node):
-    if node.parent == None:
-        print(node.data)
-        return True
-    print(node.data)
-    print_path(node.parent)
+    if node.parent != None:
+        print_path(node.parent) 
+    print("→ " + node.data, end=' ')
 
 def check_failure(string):
     death = ["WG", "GC", "GW", "CG"]
@@ -64,6 +60,7 @@ def move_right(whole_string, character):
     whole_string = whole_string[:position] + whole_string[position + 1:] + character
     position = whole_string.find("F")
     whole_string = whole_string[:position] + whole_string[position + 1:] + "F"
+    whole_string = ''.join(sorted(list(whole_string.split("|")[0]))) + "|" + ''.join(sorted(list(whole_string.split("|")[1])))
     return whole_string
 
 def move_left(whole_string, character):
@@ -71,6 +68,7 @@ def move_left(whole_string, character):
     whole_string = character+ whole_string[:position] + whole_string[position + 1:]
     position = whole_string.find("F")
     whole_string = "F" + whole_string[:position] + whole_string[position + 1:]
+    whole_string = ''.join(sorted(list(whole_string.split("|")[0]))) + "|" + ''.join(sorted(list(whole_string.split("|")[1])))
     return whole_string
 
 if __name__ == "__main__":
