@@ -27,13 +27,13 @@ list_of_states = [state_start, state1, state2, state3, state4, state5, state6, s
                   state11, state12, state13, state14, state_goal]
 
 # Actions
-action1 = {f}
-action2 = {f, c}
-action3 = {f, g}
-action4 = {f, w}
+action1 = {f, c}
+action2 = {f, g}
+action3 = {f, w}
+action4 = {f}
 
 # Cache
-cache = [state_start]
+cache = []
 
 # Visited
 visited = set()
@@ -67,9 +67,9 @@ def check_is_solution(current_state):
 def check_is_valid(current_state):
     for x in current_state:
         if len(x) == 2:
-            if "W" in x and "G" in x:  # Wolf eats Goat
+            if w in x and g in x:  # Wolf eats Goat
                 return False
-            elif "G" in x and "C" in x:  # Goat eats Cabbage
+            elif g in x and c in x:  # Goat eats Cabbage
                 return False
     return True
 
@@ -81,18 +81,23 @@ def print_solution():
 
 
 # Gives possible next states
-def get_next_states():
-    # TODO
-    pass
+def get_next_state(state):
+    if f in state[0]:
+        move_right()
+    else:
+        move_left()
 
 
 # Run the program
-def run():
-    if not check_is_valid(cache[-1]):  # State is not valid
+def run(state):
+    cache.append(state)
+    if not check_is_valid(state):  # State is not valid
         cache.pop()
-        get_next_states(cache[-1])
+        run(cache[-1])
     else:  # State is valid
-        if not check_is_solution(cache[-1]):  # State is not the solution
-            get_next_states(cache[-1])
+        if not check_is_solution(state):  # State is not the solution
+            visited.add(state)
+            run(get_next_state(state))
+
         else:  # State is the solution
             print_solution()
