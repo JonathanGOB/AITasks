@@ -14,6 +14,6 @@ def make_board(row_size, column_size):
 
 
 make_board(10, 10)
-for x in rows:
-    print(x)
+for z in rows:
+    print(z)
 
