@@ -25,17 +25,18 @@ def gwcgenerator(parent):
         if move_right(parent.data, e) in parent.get_children() or e == 'F':
             continue
         child = parent.add_child(Node(move_right(parent.data, e), parent))
+        print(data, e, "right", child.data.split('|'))
         if check_failure(child.data):
             continue
         if len(child.data.split('|')[1]) == 4:
             found.append(child)
-            gwcgenerator(parent)
             continue
         child_data = child.data.split('|')
         for i in child_data[1]:
             if move_left(child.data, i) in child.get_children():
                 continue
             child1 = child.add_child(Node(move_left(child.data, i), child))
+            print(child_data, i, "left", child1.data.split('|'))
             if not check_failure(child1.data):
                 gwcgenerator(child1)
     return found
@@ -72,6 +73,7 @@ def move_left(whole_string, character):
     return whole_string
 
 if __name__ == "__main__":
-    found = gwcgenerator(Node('FWCG|'))
-    for e in found:
-        print_path(e)
+    gwcgenerator(Node('CFGW|'))
+    for e in range(len(found)):
+        print()
+        print_path(found[e])
