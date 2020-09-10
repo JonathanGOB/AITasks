@@ -1,11 +1,11 @@
 class Node:
     data = None
     parent = None
-    children = []
 
     def __init__(self, data, parent=None):
         self.data = data
         self.parent = parent
+        self.children = []
 
     def add_child(self, child):
         self.children.append(child)
@@ -25,7 +25,7 @@ def gwcgenerator(parent):
         if move_right(parent.data, e) in parent.get_children() or e == 'F':
             continue
         child = parent.add_child(Node(move_right(parent.data, e), parent))
-        print(data, e, "right", child.data.split('|'))
+        print(data, e, "right", child.data, parent.get_children())
         if check_failure(child.data):
             continue
         if len(child.data.split('|')[1]) == 4:
@@ -33,10 +33,11 @@ def gwcgenerator(parent):
             continue
         child_data = child.data.split('|')
         for i in child_data[1]:
-            if move_left(child.data, i) in child.get_children():
+            data = move_left(child.data, i)
+            if data in child.get_children():
                 continue
-            child1 = child.add_child(Node(move_left(child.data, i), child))
-            print(child_data, i, "left", child1.data.split('|'))
+            child1 = child.add_child(Node(data, child))
+            print(child_data, i, "left", child1.data, child.get_children(), data in child.get_children())
             if not check_failure(child1.data):
                 gwcgenerator(child1)
     return found
