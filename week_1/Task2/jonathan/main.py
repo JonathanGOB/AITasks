@@ -14,13 +14,7 @@ class Board:
 
 def prepare_data(data):
     file = data
-    A_DATA = []
-    for word in file:
-        for e in range(len(word)):
-            if e == len(word) + 1:
-                A_DATA.append(word)
-            else:
-                A_DATA.append(word[:e])
+    A_DATA = [word if e == len(word) + 1 else word[:e] for word in file for e in range(len(word))]
     return set(A_DATA)
 
 
