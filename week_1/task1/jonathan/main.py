@@ -18,7 +18,7 @@ class Node:
         return return_list
 
 found = []
-
+last_visited = []
 def gwcgenerator(parent):
     data = parent.data.split('|')
     for e in data[0]:
@@ -33,12 +33,14 @@ def gwcgenerator(parent):
             continue
         child_data = child.data.split('|')
         for i in child_data[1]:
-            if move_left(child.data, i) in child.get_children():
+            if move_left(child.data, i) in child.get_children() or move_left(child.data, i) in last_visited:
                 continue
+            last_visited.append(move_left(child.data, i))
             child1 = child.add_child(Node(move_left(child.data, i), child))
             print(child_data, i, "left", child1.data, child.get_children())
             if not check_failure(child1.data):
                 gwcgenerator(child1)
+            last_visited.remove(move_left(child.data, i))
     return found
 
 def print_path(node):
