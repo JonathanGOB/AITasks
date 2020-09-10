@@ -33,11 +33,10 @@ def gwcgenerator(parent):
             continue
         child_data = child.data.split('|')
         for i in child_data[1]:
-            data = move_left(child.data, i)
-            if data in child.get_children():
+            if move_left(child.data, i) in child.get_children():
                 continue
-            child1 = child.add_child(Node(data, child))
-            print(child_data, i, "left", child1.data, child.get_children(), data in child.get_children())
+            child1 = child.add_child(Node(move_left(child.data, i), child))
+            print(child_data, i, "left", child1.data, child.get_children())
             if not check_failure(child1.data):
                 gwcgenerator(child1)
     return found
