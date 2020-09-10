@@ -1,6 +1,6 @@
 import string
 import random
-
+import os
 class Board:
 
     def __init__(self, length, height):
@@ -12,5 +12,18 @@ class Board:
             display.append(" ".join(row))
         return '\n'.join(display)
 
+def prepare_data(data):
+    file = data
+    A_DATA = []
+    for word in file:
+        for e in range(len(word)):
+            if e == len(word) + 1:
+                A_DATA.append(word)
+            else:
+                A_DATA.append(word[:e])
+    return set(A_DATA)
+
+
 board = Board(5,5)
 print(board)
+print(prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r")))
