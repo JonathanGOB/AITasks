@@ -36,7 +36,6 @@ def generator(node):  # Start the program
             grand_child = child.add_child(Node(move_left(child, {y, "F"}), node))
             if is_valid(grand_child):
                 generator(grand_child)
-    return
 
 
 def is_valid(node):
