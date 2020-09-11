@@ -44,7 +44,7 @@ def is_valid(node):  # Check if state is valid for left and right side
         if "C" in x and "G" in x:  # Check if cabbage and goat are together
             if "F" in x:  # Check if the farmer is with them
                 continue
-            else:
+            else:  # Non-valid state
                 return False
     return True  # Valid state
 
