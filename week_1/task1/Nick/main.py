@@ -3,17 +3,13 @@ import copy
 
 class Node:
     data = None  # Contains the state
-    parent = None  # Contains the parent
-    children = []   # Contains the children
     path = []   # Contains the previous steps
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data):
         self.data = data
-        self.parent = parent
 
-    def add_child(self, child):
-        self.children.append(child)
-        child.path = self.path + [self.data]
+    def make_child(self, child):  # make child node
+        child.path = self.path + [self.data]  # Add this node state and previous states to the path of the child
         return child
 
 
@@ -24,36 +20,36 @@ def generator(node):  # Start the program
     for x in node.data[0]:  # Do the left side
         if move_right(node, {x, "F"}) in node.path:  # If the state already happened skip
             continue
-        child = node.add_child(Node(move_right(node, {x, "F"}), node))  # Get the next state
+        child = node.make_child(Node(move_right(node, {x, "F"})))  # Get and add the next state
         if not is_valid(child):  # Check if next state is valid
             continue
         if len(child.data[1]) == 4:  # If the state is a goal state, add it to solutions
             solutions.append(child)
             continue
         for y in child.data[1]:  # Do the right side
-            if move_left(child, {y, "F"}) in child.path:
+            if move_left(child, {y, "F"}) in child.path:  # If the state already happened skip
                 continue
-            grand_child = child.add_child(Node(move_left(child, {y, "F"}), node))
-            if is_valid(grand_child):
-                generator(grand_child)
+            grand_child = child.make_child(Node(move_left(child, {y, "F"})))  # Get and add the next state
+            if is_valid(grand_child):  # Check if next state is valid
+                generator(grand_child)  # Continue the generator with the new state
 
 
-def is_valid(node):
+def is_valid(node):  # Check if state is valid for left and right side
     for x in node.data:
-        if "W" in x and "G" in x:
-            if "F" in x:
+        if "W" in x and "G" in x:  # Check if wolf and goat are together
+            if "F" in x:  # Check if the farmer is with them
                 continue
-            else:
+            else:  # Non-valid state
                 return False
-        if "C" in x and "G" in x:
-            if "F" in x:
+        if "C" in x and "G" in x:  # Check if cabbage and goat are together
+            if "F" in x:   # Check if the farmer is with them
                 continue
-            else:
+            else:  # Non-valid state
                 return False
-    return True
+    return True  # Valid state
 
 
-def print_solutions(solution):
+def print_solutions(solution):  # Print the found solutions
     for x in solution:
         for y in x.path:
             print(y, end="")
@@ -61,7 +57,7 @@ def print_solutions(solution):
         print(x.data)
 
 
-def move_right(node, action):
+def move_right(node, action):  # Move the objects to the right
     new_node = copy.deepcopy(node)
     for x in action:
         new_node.data[0].remove(x)
@@ -69,7 +65,7 @@ def move_right(node, action):
     return new_node.data
 
 
-def move_left(node, action):
+def move_left(node, action):  # Move the objects to the left
     new_node = copy.deepcopy(node)
     for x in action:
         new_node.data[1].remove(x)
