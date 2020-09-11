@@ -14,16 +14,16 @@ class Board:
 
 def prepare_data(data):
     file = data
-    A_DATA = []
-    for word in file:
-        for e in range(len(word)):
-            if e == len(word) + 1:
-                A_DATA.append(word)
-            else:
-                A_DATA.append(word[:e])
-    return set(A_DATA)
+    A_DATA = {word.rstrip(): sorted({word[:e] for e in range(len(word)) if e != 0}) for word in file}
+    return A_DATA
 
-
-board = Board(5,5)
-print(board)
-print(prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r")))
+def solve_board_with_data(board, data):
+    
+    pass 
+if __name__ == "__main__":
+    board = Board(5,5)
+    print(board)
+    data = prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"))
+    print(data)
+    answers = solve_board_with_data(board, data)
+    print(answers)
