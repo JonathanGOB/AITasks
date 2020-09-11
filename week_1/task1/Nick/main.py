@@ -54,8 +54,8 @@ def is_valid(node):
     return True
 
 
-def print_solutions(test):
-    for x in test:
+def print_solutions(solution):
+    for x in solution:
         for y in x.path:
             print(y, end="")
             print(" -> ", end="")
