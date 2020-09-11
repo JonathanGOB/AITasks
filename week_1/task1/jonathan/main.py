@@ -46,7 +46,7 @@ def print_path(node):
     print("→ " + node.data, end=' ')
 
 def check_failure(string):
-    death = ["WG", "GC", "GW", "CG"]
+    death = ["CG", "GW", "CGW"]
     string = string.split('|')
     for e in death:
         if e == string[0]:
