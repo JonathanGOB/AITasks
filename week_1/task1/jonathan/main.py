@@ -25,7 +25,7 @@ def gwcgenerator(parent):
     for e in data[0]:
         if move_right(parent.data, e) in parent.path:
             continue
-        child = parent.make_child(Node(move_right(parent.data, e), parent))
+        child = parent.add_child(Node(move_right(parent.data, e), parent))
         if check_failure(child.data):
             continue
         if len(child.data.split('|')[1]) == 4:
@@ -35,7 +35,7 @@ def gwcgenerator(parent):
         for i in child_data[1]:
             if move_left(child.data, i) in child.path:
                 continue
-            child1 = child.make_child(Node(move_left(child.data, i), child))
+            child1 = child.add_child(Node(move_left(child.data, i), child))
             if not check_failure(child1.data):
                 gwcgenerator(child1)
     return found
