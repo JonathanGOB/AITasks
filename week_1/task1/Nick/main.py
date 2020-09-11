@@ -3,7 +3,7 @@ import copy
 
 class Node:
     data = None  # Contains the state
-    path = []   # Contains the previous steps
+    path = []  # Contains the previous steps
 
     def __init__(self, data):
         self.data = data
@@ -42,9 +42,9 @@ def is_valid(node):  # Check if state is valid for left and right side
             else:  # Non-valid state
                 return False
         if "C" in x and "G" in x:  # Check if cabbage and goat are together
-            if "F" in x:   # Check if the farmer is with them
+            if "F" in x:  # Check if the farmer is with them
                 continue
-            else:  # Non-valid state
+            else:
                 return False
     return True  # Valid state
 
