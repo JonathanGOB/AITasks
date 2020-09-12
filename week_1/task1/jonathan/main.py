@@ -1,7 +1,5 @@
 class Node:
-    data = None
-    parent = None
-
+    
     def __init__(self, data, parent=None):
         self.data = data
         self.parent = parent
@@ -12,12 +10,6 @@ class Node:
         self.children.append(child)
         child.path = self.path + [self.data]
         return child
-
-    def get_children(self):
-        return_list = []
-        for e in self.children:
-            return_list.append(e.data)
-        return return_list
 
 found = []
 def gwcgenerator(parent):
