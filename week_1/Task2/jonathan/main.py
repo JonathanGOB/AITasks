@@ -26,13 +26,8 @@ def prepare_data(file_A, file_B):
     A_DATA = sorted([word[:e] for word in file_A for e in range(len(word)) if e < len(word) - 1 and e != 0])
     B_DATA = sorted([word.rstrip("\n") for word in file_B])
     return set(A_DATA), set(B_DATA)
-    # A_DATA = {word.rstrip(): sorted({word[:e] for e in range(len(word)) if e != 0 and e != len(word) - 1}) for word in file}
-    # return A_DATA
 
-neighborOffsets = (
-		         (-1, 0),
-		(0, -1), (0, 0), (0, 1),
-		        (1, 0),)
+neighborOffsets = ((-1, 0),(0, -1), (0, 0), (0, 1),(1, 0),)
 
 def solve_board_with_data(board, prefixes, full_words, found, word=None, state=None, start_position=None):
     if start_position: # search next from this state
@@ -87,7 +82,7 @@ def solve_easy(board,  prefixes, full_words, found, word=None, state=None, start
     
     return found
 if __name__ == "__main__":
-    board = Board([[[random.choice(string.ascii_lowercase), 0] for e in range(100)] for e in range(100)])
+    board = Board([[[random.choice(string.ascii_lowercase), 0] for e in range(10)] for e in range(10)])
     print(board)
     prefixes, full_words = prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"), open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"))
     answers = solve_easy(board, prefixes, full_words, [])
