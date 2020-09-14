@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-import model as mo
-import config as cf
+import week_1.Task4.Nick.model as mo
+import week_1.Task4.Nick.config as cf
 
 # global var
 START_FLAG = True # not redraw grid when pressing start first time
@@ -46,12 +46,12 @@ class MainApp(tk.Frame):
             for y in range(cf.SIZE):
                 node = (x, y)
                 if mo.bernoulli_trial(self):
-                    mo.set_grid_value(node, 'b') # set as blocked
+                    mo.set_grid_value(node, 'b')  # set as blocked
                     self.plot_node(node, color=cf.BLOCK_C)
                 else:
                     mo.set_grid_value(node, -1)  # init costs, -1 means infinite
 
-        # start and goal cannot be bloking nodes
+        # start and goal cannot be blocking nodes
         mo.set_grid_value(cf.START, 0)
         mo.set_grid_value(cf.GOAL, -1)
 
@@ -142,6 +142,7 @@ class MainApp(tk.Frame):
             prev = path[current]
             self.plot_line_segment(prev[0], prev[1], current[0], current[1], color=cf.FINAL_C)
             current = prev
+
 
 # create and start GUI
 root = tk.Tk()
