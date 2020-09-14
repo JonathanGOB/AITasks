@@ -13,7 +13,7 @@ class Board:
     
     def add_child(self, child):
         child.path = self.path + [self.playground]
-        child.words = self.words
+        child.words = copy.deepcopy(self.words)
         return child        
 
     def add_word(self, word):
@@ -69,5 +69,4 @@ if __name__ == "__main__":
     prefixes, full_words = prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"), open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"))
     answers = solve_board_with_data(board, prefixes, full_words, [])
     answers = sorted(answers, key=lambda x: len(x.words), reverse=True)
-    print(answers)
     print(answers[0].words)
