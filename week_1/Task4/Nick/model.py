@@ -30,7 +30,6 @@ class PriorityQueue:
 
 
 class Node:
-    children = []
 
     def __init__(self, x, y, g=0, f=0, parent=None):
         self.x = x
@@ -38,16 +37,20 @@ class Node:
         self.g = g
         self.f = f
         self.parent = parent
+        self.children = []
 
-    def generate_children(self):
-        if self.y != 0:
-            self.children.append(Node(self.x, self.y - 1))  # Top child
-        if self.x != cf.SIZE - 1:
-            self.children.append(Node(self.x + 1, self.y))  # Right child
-        if self.y != cf.SIZE - 1:
-            self.children.append(Node(self.x, self.y + 1))  # Bottom child
-        if self.x != 0:
-            self.children.append(Node(self.x - 1, self.y))  # Left child
+    def __gt__(self, other):
+        return self.x > other.x
+
+    def generate_children(self, x, y):
+        if y != 0:
+            self.children.append(Node(x, y - 1))  # Top child
+        if x != cf.SIZE - 1:
+            self.children.append(Node(x + 1, y))  # Right child
+        if y != cf.SIZE - 1:
+            self.children.append(Node(x, y + 1))  # Bottom child
+        if x != 0:
+            self.children.append(Node(x - 1, y))  # Left child
 
 
 def bernoulli_trial(app):
@@ -66,13 +69,13 @@ def set_grid_value(node, value):
 
 def search(app, start, goal):  # TODO add heuristic
     start_node = Node(start[0], start[1])
-    start_node.generate_children()
     open_set = PriorityQueue()
     open_set.put(0, start_node)
     test_open_set = [start_node]
     closed_set = []
     while len(open_set.elements) > 0:
         current = open_set.get()  # Get lowest score
+        current.generate_children(current.x, current.y)
         if current.x == goal[0] and current.y == goal[1]:  # Check if current is the goal
             return draw_path(current, app)
         closed_set.append(current)
@@ -80,7 +83,7 @@ def search(app, start, goal):  # TODO add heuristic
             if child in closed_set:
                 continue  # Skip if already checked
             temporary_g_score = current.g + 1
-            if (child.g, child) not in test_open_set:
+            if child not in test_open_set:
                 open_set.put(temporary_g_score, child)  # New node
                 test_open_set.append(child)
             elif temporary_g_score > child.g:
