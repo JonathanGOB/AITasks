@@ -1,3 +1,5 @@
 venv
 .idea
 .vscode/settings.json
+*.pyc
+week_1/Task2/jonathan/test.py
