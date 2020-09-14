@@ -9,15 +9,10 @@ class Board:
     def __init__(self, playground):
         self.playground = playground
         self.path = []
-        self.words = []
     
     def add_child(self, child):
         child.path = self.path + [self.playground]
-        child.words = self.words
         return child        
-
-    def add_word(self, word):
-        self.words.append(word)
 
     def __str__(self):
         display = []
@@ -49,11 +44,9 @@ def solve_board_with_data(board, prefixes, full_words, found, word=None, state=N
                     new_board.playground[e[0] + temp[0]][e[1] + temp[1]][1] = (start_position[0] + 1) * (start_position[1] + 1)
                     if word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0] in prefixes:
                         solve_board_with_data(new_board, prefixes, full_words, found, word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0], [e[0] + temp[0], e[1] + temp[1]], start_position)
-                    if word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0] in full_words and word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0] not in new_board.words:
-                        new_board.add_word(word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0])
-                        found.append(new_board)
-                        solve_board_with_data(new_board, prefixes, full_words, found)
-
+                    if word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0] in full_words and word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0] not in found:
+                        found.append(word + board.playground[e[0] + temp[0]][e[1] + temp[1]][0])
+                        
     if not start_position: # search new letter
         for e in range(len(board.playground)):
             for i in range(len(board.playground[e])):
@@ -68,6 +61,4 @@ if __name__ == "__main__":
     print(board)
     prefixes, full_words = prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"), open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"))
     answers = solve_board_with_data(board, prefixes, full_words, [])
-    answers = sorted(answers, key=lambda x: len(x.words), reverse=True)
     print(answers)
-    print(answers[0].words)
