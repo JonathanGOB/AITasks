@@ -14,8 +14,10 @@ class Board:
 
 def prepare_data(data):
     file = data
-    A_DATA = {word.rstrip(): sorted({word[:e] for e in range(len(word)) if e != 0}) for word in file}
-    return A_DATA
+    A_DATA = sorted([word if e == len(word) + 1 else word[:e] for word in file for e in range(len(word))])
+    return set(A_DATA)
+    # A_DATA = {word.rstrip(): sorted({word[:e] for e in range(len(word)) if e != 0 and e != len(word) - 1}) for word in file}
+    # return A_DATA
 
 def solve_board_with_data(board, data):
     
@@ -24,6 +26,6 @@ if __name__ == "__main__":
     board = Board(5,5)
     print(board)
     data = prepare_data(open(os.getcwd() + "\\week_1\\Task2\\jonathan\\words.txt", "r"))
-    print(data)
+    #print(data)
     answers = solve_board_with_data(board, data)
     print(answers)
