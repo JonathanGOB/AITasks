@@ -12,7 +12,7 @@ class Node:
         return child
 
 
-def gwcgenerator(parent, found):
+def gwcgenerator(parent, found): # O(b^d)
     data = parent.data.split('|')
     for e in data[0]:
         if move_right(parent.data, e) in parent.path:
@@ -53,8 +53,7 @@ def move_right(whole_string, character):
     whole_string = whole_string[:position] + whole_string[position + 1:] + character
     position = whole_string.find("F")
     whole_string = whole_string[:position] + whole_string[position + 1:] + "F"
-    whole_string = ''.join(sorted(list(whole_string.split("|")[0]))) + "|" + ''.join(
-        sorted(list(whole_string.split("|")[1])))
+    whole_string = ''.join(sorted(list(whole_string.split("|")[0]))) + "|" + ''.join(sorted(list(whole_string.split("|")[1])))
     return whole_string
 
 

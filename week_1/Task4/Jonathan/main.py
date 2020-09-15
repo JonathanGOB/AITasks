@@ -5,6 +5,8 @@ import config as cf
 
 # global var
 START_FLAG = True # not redraw grid when pressing start first time
+import threading, time
+
 
 class MainApp(tk.Frame):
     # frame for the grid (subclass of tk.Frame)
@@ -83,7 +85,9 @@ class MainApp(tk.Frame):
             if not START_FLAG:
                 self.re_plot()
             START_FLAG = False
-            mo.search(self, cf.START, cf.GOAL, self.alg.get())
+            d = threading.Thread(name='daemon', target=mo.search, args=(self, cf.START, cf.GOAL, self.alg.get()))
+            d.setDaemon(True)
+            d.start()
 
         start_button = tk.Button(lf1, text="Start", command=start_search, width=10)
         start_button.grid(row=1, column=1, sticky='w', padx=5, pady=5)

@@ -59,7 +59,6 @@ def search(app, start, goal, alg):
         node = queue.get()
         closed_list.append(node[0])
         app.plot_node((node[0][0], node[0][1]), color=cf.PATH_C)
-        print(node[0])
         for neighbor in neighborOffsets:
             key = True
             if (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) == goal:

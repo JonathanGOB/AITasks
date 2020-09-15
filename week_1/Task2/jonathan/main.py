@@ -39,7 +39,7 @@ def prepare_data(file_A, file_B):
 neighborOffsets = ((-1, 0), (0, -1), (0, 0), (0, 1), (1, 0),)
 
 
-def solve_board_with_data(board, prefixes, full_words, found, word=None, state=None, start_position=None):
+def solve_board_with_data(board, prefixes, full_words, found, word=None, state=None, start_position=None): # O(b^d)
     if start_position:  # search next from this state
         for e in neighborOffsets:
             temp = copy.deepcopy(state)
