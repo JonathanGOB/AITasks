@@ -81,7 +81,7 @@ def heuristic(child, end):
 
 
 def search(app, start, goal, alg):
-    start_node = Node(x=start[0], y=start[1], g=0, f=48)
+    start_node = Node(x=start[0], y=start[1], g=0, f=0)
     open_set = PriorityQueue()
     open_set.put(0, start_node)
     test_open_set = [start_node]
@@ -117,10 +117,4 @@ def draw_path(current, app):
     while temp.parent:
         app.plot_line_segment(temp.x, temp.y, temp.parent.x, temp.parent.y, color=cf.FINAL_C)
         temp = temp.parent
-
-    # plot a sample path for demonstration
-    # for i in range(cf.SIZE - 1):
-    #     app.plot_line_segment(i, i + 1, i + 1, i + 1, color=cf.FINAL_C)
-    #     app.plot_line_segment(i, i, i, i + 1, color=cf.FINAL_C)
-    #
-    #     app.pause()
+        app.pause()
