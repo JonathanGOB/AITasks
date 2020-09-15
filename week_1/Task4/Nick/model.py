@@ -75,8 +75,8 @@ def set_grid_value(node, value):
     grid[node[0]][node[1]] = value
 
 
-def heuristic(child, end):
-    h = abs(child.x - end[0]) + abs(child.y - end[1])
+def heuristic(child):
+    h = abs(child.x - (cf.SIZE-1)) + abs(child.y - (cf.SIZE-1))
     return h
 
 
@@ -102,7 +102,7 @@ def search(app, start, goal, alg):
             if temporary_g_score < child.g:  # Path is better than previous one
                 child.parent = current
                 child.g = temporary_g_score
-                child.f = child.g + heuristic(child, goal)
+                child.f = child.g + heuristic(child)
                 if child not in test_open_set:
                     test_open_set.append(child)
                     if alg == "UC":  # When UC alg is selected
