@@ -57,18 +57,18 @@ def search(app, start, goal):
     queue.put([start, 0, 0, 0, [goal]], 0)  # G = distance, H = heuristic, F= total_cost, path
     while not queue.empty():
         node = queue.get()
-        print(node[4])
         closed_list.append(node[0])
-        #print(node[0])
+        app.plot_node((node[0][0], node[0][1]), color=cf.PATH_C)
+        print(node[0])
         for neighbor in neighborOffsets:
             key = True
             if (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) == goal:
                 node[4] = [start] + node[4]
-                print(node[4])
                 for k in range(len(node[4])):
                     if k != len(node[4]) - 1:
                         app.plot_line_segment(node[4][k][0], node[4][k][1], node[4][k + 1][0], node[4][k + 1][1],
                                               color=cf.FINAL_C)
+                        app.pause()
                 while not queue.empty():
                     queue.get()
                 continue
@@ -85,8 +85,7 @@ def search(app, start, goal):
                 path = copy.deepcopy(node[4])
                 path.insert(len(path) - 1, (node[0][0] + neighbor[0], node[0][1] + neighbor[1]))
                 for element in queue.elements:
-                    if element[1][0] == (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) and G < element[1][1]:
-                        print("checked")
+                    if element[1][0] == (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) and G > element[1][1]:
                         key = False
                         break
                 if key:
