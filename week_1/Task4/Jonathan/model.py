@@ -2,6 +2,7 @@ import random
 import heapq
 import math
 import config as cf
+import copy
 
 # global var
 grid = [[0 for x in range(cf.SIZE)] for y in range(cf.SIZE)]
@@ -56,25 +57,40 @@ def search(app, start, goal):
     queue.put([start, 0, 0, 0, [goal]], 0)  # G = distance, H = heuristic, F= total_cost, path
     while not queue.empty():
         node = queue.get()
+        print(node[4])
         closed_list.append(node[0])
+        #print(node[0])
         for neighbor in neighborOffsets:
+            key = True
             if (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) == goal:
+                node[4] = [start] + node[4]
+                print(node[4])
                 for k in range(len(node[4])):
-                    app.plot_line_segment(node[4][k][0], node[4][k][1], node[4][k + 1][0], node[4][k + 1][1] + 1,
-                                          color=cf.FINAL_C)
+                    if k != len(node[4]) - 1:
+                        app.plot_line_segment(node[4][k][0], node[4][k][1], node[4][k + 1][0], node[4][k + 1][1],
+                                              color=cf.FINAL_C)
                 while not queue.empty():
                     queue.get()
                 continue
-            if not (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) in closed_list:
-                if get_grid_value([node[0][0] + neighbor[0], node[0][1] + neighbor[1]]) != 'b':
-                    if (node[0][0] + neighbor[0] != len(grid[0]) - 1 and not node[0][0] + neighbor[0] < 0) and (
-                            node[0][1] + neighbor[1] != len(grid[0]) - 1 and not node[0][1] + neighbor[1] < 0):
-                        G = node[1] + 1
-                        H = manhattan_distance((node[0][0] + neighbor[0], node[0][1] + neighbor[1]), goal)
-                        F = G + H
-                        path = node[:][4]
-                        path.append((node[0][0] + neighbor[0], node[0][1] + neighbor[1]))
-                        queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], F)
+            for closed_child in closed_list:
+                if (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) == closed_child:
+                    key = False
+                    break
+            if node[0][0] + neighbor[0] > len(grid[0]) - 1 or node[0][0] + neighbor[0] < 0 or node[0][1] + neighbor[1] > len(grid[0]) - 1 or node[0][1] + neighbor[1] < 0:
+                continue
+            if get_grid_value([node[0][0] + neighbor[0], node[0][1] + neighbor[1]]) != 'b':
+                G = copy.deepcopy(node[1]) + 1
+                H = manhattan_distance((node[0][0] + neighbor[0], node[0][1] + neighbor[1]), goal)
+                F = G + H
+                path = copy.deepcopy(node[4])
+                path.insert(len(path) - 1, (node[0][0] + neighbor[0], node[0][1] + neighbor[1]))
+                for element in queue.elements:
+                    if element[1][0] == (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) and G < element[1][1]:
+                        print("checked")
+                        key = False
+                        break
+                if key:
+                    queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], F)
 
     # plot a sample path for demonstration
     # for i in range(cf.SIZE - 1):
