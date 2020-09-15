@@ -1,6 +1,7 @@
 import random
 import heapq
 import math
+
 import week_1.Task4.Nick.config as cf
 
 # global var
@@ -31,26 +32,33 @@ class PriorityQueue:
 
 class Node:
 
-    def __init__(self, x, y, g=0, f=0, parent=None):
+    def __init__(self, x, y, g=99999, f=99999, parent=None):
         self.x = x
         self.y = y
         self.g = g
         self.f = f
         self.parent = parent
         self.children = []
+        self.blocked = False
 
     def __gt__(self, other):
         return self.x > other.x
 
     def generate_children(self, x, y):
         if y != 0:
-            self.children.append(Node(x, y - 1))  # Top child
-        if x != cf.SIZE - 1:
-            self.children.append(Node(x + 1, y))  # Right child
-        if y != cf.SIZE - 1:
-            self.children.append(Node(x, y + 1))  # Bottom child
+            self.children.append(Node(x=x, y=y-1))  # Top child
+        if x != cf.SIZE:
+            self.children.append(Node(x=x+1, y=y))  # Right child
+        if y != cf.SIZE:
+            self.children.append(Node(x=x, y=y+1))  # Bottom child
         if x != 0:
-            self.children.append(Node(x - 1, y))  # Left child
+            self.children.append(Node(x=x-1, y=y))  # Left child
+
+    def check_blocked(self):
+        for child in self.children:
+            if child.x < cf.SIZE and child.y < cf.SIZE:
+                if get_grid_value((child.x, child.y)) == "b":
+                    child.blocked = True
 
 
 def bernoulli_trial(app):
@@ -67,8 +75,13 @@ def set_grid_value(node, value):
     grid[node[0]][node[1]] = value
 
 
-def search(app, start, goal):  # TODO add heuristic
-    start_node = Node(start[0], start[1])
+def heuristic(child, end):
+    h = abs(child.x - end[0]) + abs(child.y - end[1])
+    return h
+
+
+def search(app, start, goal):
+    start_node = Node(x=start[0], y=start[1], g=0, f=48)
     open_set = PriorityQueue()
     open_set.put(0, start_node)
     test_open_set = [start_node]
@@ -76,29 +89,29 @@ def search(app, start, goal):  # TODO add heuristic
     while len(open_set.elements) > 0:
         current = open_set.get()  # Get lowest score
         current.generate_children(current.x, current.y)
+        current.check_blocked()
         if current.x == goal[0] and current.y == goal[1]:  # Check if current is the goal
             return draw_path(current, app)
+        test_open_set.remove(current)
         closed_set.append(current)
         for child in current.children:
-            if child in closed_set:
-                continue  # Skip if already checked
+            if child in closed_set or child.blocked:  # Skip if already checked or path blocked
+                continue
             temporary_g_score = current.g + 1
-            if child not in test_open_set:
-                open_set.put(temporary_g_score, child)  # New node
-                test_open_set.append(child)
-            elif temporary_g_score > child.g:
-                continue  # Not a better path
-            child.parent = current
-            child.g = temporary_g_score
-            # child.f = child.g + heuristic() # TODO
-
+            if temporary_g_score < child.g:  # Path is better than previous one
+                child.parent = current
+                child.g = temporary_g_score
+                child.f = child.g + heuristic(child, goal)
+                if child not in test_open_set:
+                    test_open_set.append(child)
+                    open_set.put(child.f, child)
     return print("There is no solution")
 
 
 def draw_path(current, app):
     temp = current
     while temp.parent:
-        app.plot_line_segment(temp.x, temp.y, temp.parent.x, temp.parent.y)
+        app.plot_line_segment(temp.x, temp.y, temp.parent.x, temp.parent.y, color=cf.FINAL_C)
         temp = temp.parent
 
     # plot a sample path for demonstration
