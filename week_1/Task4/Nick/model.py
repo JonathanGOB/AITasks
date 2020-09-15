@@ -80,7 +80,7 @@ def heuristic(child, end):
     return h
 
 
-def search(app, start, goal):
+def search(app, start, goal, alg):
     start_node = Node(x=start[0], y=start[1], g=0, f=48)
     open_set = PriorityQueue()
     open_set.put(0, start_node)
@@ -94,6 +94,7 @@ def search(app, start, goal):
             return draw_path(current, app)
         test_open_set.remove(current)
         closed_set.append(current)
+        app.plot_node((current.x, current.y), color=cf.PATH_C)
         for child in current.children:
             if child in closed_set or child.blocked:  # Skip if already checked or path blocked
                 continue
@@ -104,7 +105,10 @@ def search(app, start, goal):
                 child.f = child.g + heuristic(child, goal)
                 if child not in test_open_set:
                     test_open_set.append(child)
-                    open_set.put(child.f, child)
+                    if alg == "UC":  # When UC alg is selected
+                        open_set.put(child.g, child)
+                    if alg == "A*":  # When A* alg is selected
+                        open_set.put(child.f, child)
     return print("There is no solution")
 
 
