@@ -51,7 +51,7 @@ def manhattan_distance(current_node, goal):
     return abs(current_node[0] - goal[0]) + abs(current_node[1] - goal[1])
 
 
-def search(app, start, goal):
+def search(app, start, goal, alg):
     queue = PriorityQueue()
     closed_list = []
     queue.put([start, 0, 0, 0, [goal]], 0)  # G = distance, H = heuristic, F= total_cost, path
@@ -89,8 +89,10 @@ def search(app, start, goal):
                         key = False
                         break
                 if key:
-                    queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], F)
-
+                    if alg == "A*":
+                        queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], F)
+                    if alg == "UC":
+                        queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], G)
     # plot a sample path for demonstration
     # for i in range(cf.SIZE - 1):
     #     app.plot_line_segment(i, i, i, i + 1, color=cf.FINAL_C)
