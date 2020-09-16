@@ -1,5 +1,5 @@
 opdracht 1 en 2
 
-dfs O(b^D)
-b = branching factor
-D = max depth
+dfs O(V + E)
+V = vertices(nodes)
+E = edges
