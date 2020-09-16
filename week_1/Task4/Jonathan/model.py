@@ -78,13 +78,13 @@ def search(app, start, goal, alg):
             if node[0][0] + neighbor[0] > len(grid[0]) - 1 or node[0][0] + neighbor[0] < 0 or node[0][1] + neighbor[1] > len(grid[0]) - 1 or node[0][1] + neighbor[1] < 0:
                 continue
             if get_grid_value([node[0][0] + neighbor[0], node[0][1] + neighbor[1]]) != 'b':
-                G = copy.deepcopy(node[1]) + 1
+                G = len(node[4])
                 H = manhattan_distance((node[0][0] + neighbor[0], node[0][1] + neighbor[1]), goal)
                 F = G + H
                 path = copy.deepcopy(node[4])
                 path.insert(len(path) - 1, (node[0][0] + neighbor[0], node[0][1] + neighbor[1]))
                 for element in queue.elements:
-                    if element[1][0] == (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) and G > element[1][1]:
+                    if element[1][0] == (node[0][0] + neighbor[0], node[0][1] + neighbor[1]) and G > len(element[1][4]):
                         key = False
                         break
                 if key:
@@ -92,6 +92,7 @@ def search(app, start, goal, alg):
                         queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], F)
                     if alg == "UC":
                         queue.put([(node[0][0] + neighbor[0], node[0][1] + neighbor[1]), G, H, F, path], G)
+    app.plot_node(start, color=cf.START_C)
     # plot a sample path for demonstration
     # for i in range(cf.SIZE - 1):
     #     app.plot_line_segment(i, i, i, i + 1, color=cf.FINAL_C)
