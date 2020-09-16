@@ -1,5 +1,5 @@
 opdracht 1 en 2
 
-dfs O(b^d)
+dfs O(b^D)
 b = branching factor
-d = max depth
+D = max depth
