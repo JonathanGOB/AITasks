@@ -1,5 +1,5 @@
 opdracht 1 en 2
 
 dfs O(V + E)
-V = vertices
+V = vertices(nodes)
 E = edges
