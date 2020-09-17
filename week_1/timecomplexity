@@ -3,3 +3,11 @@ opdracht 1 en 2
 dfs O(V + E)
 V = vertices(nodes)
 E = edges
+
+opdracht 1
+
+O(1) fixed size
+
+opdracht 2
+
+O(N*N)
