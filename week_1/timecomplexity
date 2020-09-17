@@ -10,4 +10,4 @@ O(1) fixed size
 
 opdracht 2
 
-O(N*N)
+O(N^N)
