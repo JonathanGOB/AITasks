@@ -9,5 +9,5 @@ opdracht 1
 O(1) fixed size
 
 opdracht 2
-
-O(N^N)
+matrix * n * length_of_word
+O(n*m * N^L)
