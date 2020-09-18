@@ -21,8 +21,8 @@ def nearest_neighbour(cities):
     while len(path) != length:
         temp = []
         for city in cities:
-            heapq.heappush(temp, (distance(city, path[len(path) - 1]), city))
-        city = heapq.heappop(temp)[1]
+            temp.append((distance(city, path[len(path) - 1]), city))
+        city = min(temp, key=lambda city: city[0])[1]
         path.insert(len(path), city)
         cities.remove(city)
     return path
@@ -74,8 +74,8 @@ def plot_tsp(algorithm, cities):
     plot_tour(tour)
 
 cities = make_cities(10)
-NN = nearest_neighbour(cities)
-TAT = try_all_tours(cities)
-res = [1 if NN[N] == TAT[N] else 0 for N in range(len(NN))].count(1) / len([1 if NN[N] == TAT[N] else 0 for N in range(len(NN))]) * 100
-print("{0} % similarity".format(res))
-plot_tsp(nearest_neighbour, make_cities(10))
+# NN = nearest_neighbour(cities)
+# TAT = try_all_tours(cities)
+# res = [1 if NN[N] == TAT[N] else 0 for N in range(len(NN))].count(1) / len([1 if NN[N] == TAT[N] else 0 for N in range(len(NN))]) * 100
+# print("{0} % similarity".format(res))
+plot_tsp(nearest_neighbour, cities)
