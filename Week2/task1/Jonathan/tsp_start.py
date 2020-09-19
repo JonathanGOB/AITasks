@@ -70,10 +70,10 @@ def plot_tsp(algorithm, cities):
     print("Start plotting ...")
     plot_tour(tour)
 
-cities = make_cities(10)
-NN = nearest_neighbour(cities)
-TAT = try_all_tours(cities)
-res = [1 if NN[N] == TAT[N] else 0 for N in range(len(NN))].count(1) / len([1 if NN[N] == TAT[N] else 0 for N in range(len(NN))]) * 100
-print("{0} % similarity".format(res))
-plot_tsp(two_opt, cities)
+cities = make_cities(500)
+#NN = nearest_neighbour(cities)
+#TAT = try_all_tours(cities)
+#res = [1 if NN[N] == TAT[N] else 0 for N in range(len(NN))].count(1) / len([1 if NN[N] == TAT[N] else 0 for N in range(len(NN))]) * 100
+#print("{0} % similarity".format(res))
+plot_tsp(two_opt, nearest_neighbour(cities))
 plot_tsp(nearest_neighbour, cities)

@@ -1,4 +1,5 @@
-x = [1,2,3]
+x = range(10)
 #x = [(1,2), (1,5)]
 
-print(x[1:])
+for i in x:
+    print(i)
