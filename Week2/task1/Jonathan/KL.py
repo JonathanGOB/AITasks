@@ -27,15 +27,6 @@ def is_intersect(p1, p2, q1, q2):
 
     if op1 != op2 and op3 != op4:
         return True
-
-    if op1 == 0 and onSegment(p1, p2, q1):
-        return True
-    if op2 == 0 and onSegment(p1, q2, q1):
-        return True
-    if op3 == 0 and onSegment(p2, p1, q2):
-        return True
-    if op4 == 0 and onSegment(p2, q1, q2):
-        return True
     return False
 
 def onSegment(p, q, r):
