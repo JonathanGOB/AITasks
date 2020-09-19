@@ -51,7 +51,7 @@ def two_opt(cities):
             selected = [tour[::-1][i], tour[::-1][i -1]]
             for j in range(i + 1, len(tour)):
                 comparison = [tour[::-1][j], tour[::-1][j-1]]
-                if comparison[0] == selected[0] or comparison[1] == selected[1] or j - i == 1:
+                if j - i == 1:
                     continue
                 if is_intersect(*selected, *comparison):
                     new_tour = tour[:]
