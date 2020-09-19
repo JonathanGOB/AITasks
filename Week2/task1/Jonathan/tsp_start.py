@@ -4,8 +4,7 @@ import time
 import itertools
 import math
 from collections import namedtuple
-import heapq
-
+from Week2.task1.Jonathan.KL import two_opt
 # based on Peter Norvig's IPython Notebook on the TSP
 
 City = namedtuple('City', 'x y')
@@ -15,10 +14,8 @@ def distance(A, B):
 
 def nearest_neighbour(cities):
     cities = list(cities)
-    length = len(cities)
-    path = [cities[0]]
-    del cities[0]
-    while len(path) != length:
+    path = [cities.pop(0)]
+    while cities:
         temp = []
         for city in cities:
             temp.append((distance(city, path[len(path) - 1]), city))
@@ -74,8 +71,9 @@ def plot_tsp(algorithm, cities):
     plot_tour(tour)
 
 cities = make_cities(10)
-# NN = nearest_neighbour(cities)
-# TAT = try_all_tours(cities)
-# res = [1 if NN[N] == TAT[N] else 0 for N in range(len(NN))].count(1) / len([1 if NN[N] == TAT[N] else 0 for N in range(len(NN))]) * 100
-# print("{0} % similarity".format(res))
-plot_tsp(nearest_neighbour, cities)
+NN = nearest_neighbour(cities)
+TAT = try_all_tours(cities)
+res = [1 if NN[N] == TAT[N] else 0 for N in range(len(NN))].count(1) / len([1 if NN[N] == TAT[N] else 0 for N in range(len(NN))]) * 100
+print("{0} % similarity".format(res))
+plot_tsp(two_opt, nearest_neighbour(cities))
+#plot_tsp(nearest_neighbour, cities)
