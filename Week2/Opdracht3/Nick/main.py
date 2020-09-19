@@ -54,9 +54,8 @@ class MainApp(tk.Frame):
         self.update_idletasks() # redraw widgets
         
     def do_move(self):
-        model.game_score(self.board)
         # direction = model.get_random_move()
-        direction = model.get_expectimax(model.Node(self.board), model.MAX_DEPTH, "YOU")
+        direction = model.value(self.board)
         if model.move_exists(self.board):
             self.board = model.play_move(self.board, direction)
             self.update_grid_cells()           # redraw grid

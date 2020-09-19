@@ -1,8 +1,9 @@
 import random
 import itertools
 import math
+import copy
 
-MAX_DEPTH = 6
+MAX_DEPTH = 3
 
 
 def merge_left(b):
@@ -162,53 +163,44 @@ def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
 
-def get_expectimax(node, depth, player):
-    answer = get_expectimax_move(node, depth, player)
-    return answer.direction
+# direction = model.value(self.board) First call
+# expected value is 0.1 * 4 + 0.9 * 2
+# search and evaluation function
+
+def get_move(board):
+    value(board, MAX_DEPTH, "YOU")
+    pass  # Needs to return direction
 
 
-# direction = model.get_expectimax_move(model.Node(self.board), model.MAX_DEPTH, "YOU") First call
-def get_expectimax_move(node, depth, player):
-    if depth == 0 or move_exists(node.b) is False:
-        return node
-    if player == "YOU":
-        value = node
-        node.generate_children(node.b)
-        for child in node.children:
-            value = max(value, get_expectimax_move(child, depth-1, "EXP"))
-        return value
-    else:  # Player = EXP
-        value = Node(add_two_four(node.b), node.direction)
-        get_expectimax_move(value, depth-1, "YOU")
-        return value
+def value(board, depth, player):
+    if depth == 0:
+        if game_state(board) == "lose":
+            return -100000
+        return calculate_utility(board)
+    if player == "MAX":
+        return max_value(board, depth)
+    else:
+        return exp_value(board, depth)
 
 
-class Node:
-
-    def __init__(self, b, direction=None):
-        self.b = b
-        self.direction = direction
-        self.children = []
-        self.value = game_score(b)
-
-    def __eq__(self, other):
-        return self.value == other.value
-
-    def __gt__(self, other):
-        return self.value > other.value
-
-    def __lt__(self, other):
-        return self.value < other.value
-
-    def generate_children(self, b):
-        self.children = [Node(merge_left(b), "left"), Node(merge_right(b), "right"),
-                         Node(merge_down(b), "down"), Node(merge_up(b), "up")]
+def max_value(board, depth):
+    v = -math.inf
+    for direction in MERGE_FUNCTIONS.keys():
+        new_board = play_move(board, direction)
+        v = max(v, value(new_board, depth-1, "EXP"))
+    return v
 
 
-def game_score(b):
-    score = 0
-    for i in b:
-        for j in i:
-            score += j
-    return score
+def exp_value(board, depth):
+    v = 0
+    # for successor in state:
+        # p = probabilty(succesor)
+        # v += p * value(successor, depth-1, "MAX")
+    for direction in MERGE_FUNCTIONS.keys():
+        new_board = play_move(board, direction)
+        v = min(v, value(new_board, depth-1, "EXP"))
+    return v
 
+
+def calculate_utility(board):
+    pass  # calculate the score adding heuristic
