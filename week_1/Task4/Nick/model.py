@@ -44,6 +44,7 @@ class Node:
     def __gt__(self, other):
         return self.x > other.x
 
+
     def generate_children(self, x, y):
         if y != 0:
             self.children.append(Node(x=x, y=y-1))  # Top child

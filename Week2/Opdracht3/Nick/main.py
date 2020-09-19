@@ -1,5 +1,5 @@
 import tkinter as tk
-import model
+import Week2.Opdracht3.Nick.model as model
 
 # global gui vars
 SIZE = 500
@@ -54,8 +54,9 @@ class MainApp(tk.Frame):
         self.update_idletasks() # redraw widgets
         
     def do_move(self):
-        direction = model.get_random_move()
-        # direction = model.get_expectimax_move(self.board)
+        model.game_score(self.board)
+        # direction = model.get_random_move()
+        direction = model.get_expectimax(model.Node(self.board), model.MAX_DEPTH, "YOU")
         if model.move_exists(self.board):
             self.board = model.play_move(self.board, direction)
             self.update_grid_cells()           # redraw grid

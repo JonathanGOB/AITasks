@@ -2,11 +2,12 @@ import random
 import itertools
 import math
 
-MAX_DEPTH = 3
+MAX_DEPTH = 6
+
 
 def merge_left(b):
     # merge the board left
-    # this is the funcyoin that is reused in the other merges
+    # this is the function that is reused in the other merges
     # b = [[0, 2, 4, 4], [0, 2, 4, 8], [0, 0, 0, 4], [2, 2, 2, 2]]    
     def merge(row, acc):
         # recursive helper for merge_left
@@ -38,6 +39,7 @@ def merge_left(b):
         new_b.append(merged)
     # return [[2, 8, 0, 0], [2, 4, 8, 0], [4, 0, 0, 0], [4, 4, 0, 0]]
     return new_b
+
 
 def merge_right(b):
     # merge the board right
@@ -80,6 +82,7 @@ MERGE_FUNCTIONS = {
     'down': merge_down
 }
 
+
 def move_exists(b):
     # check whether or not a move exists on the board
     # b = [[1, 2, 3, 4], [5, 6, 7, 8]]
@@ -97,6 +100,7 @@ def move_exists(b):
     else:
         return False
 
+
 def start():
     # make initial board
     b = [[0] * 4 for _ in range(4)]
@@ -106,7 +110,7 @@ def start():
 
 
 def play_move(b, direction):
-    # get merge functin an apply it to board
+    # get merge function an apply it to board
     b = MERGE_FUNCTIONS[direction](b)
     add_two_four(b)
     return b
@@ -126,12 +130,14 @@ def add_two_four(b):
         else:
             continue
 
+
 def game_state(b):
     for i in range(4):
         for j in range(4):
             if b[i][j] >= 2048:
                 return 'win'
     return 'lose'
+
 
 def test():
     b = [[0, 2, 4, 4], [0, 2, 4, 8], [0, 0, 0, 4], [2, 2, 2, 2]]
@@ -147,12 +153,62 @@ def test():
     assert (merge_down(b)) == [(0, 0, 0, 0), (2, 0, 0, 0), (16, 0, 4, 0), (4, 8, 2, 0)]
     assert (move_exists(b)) == True
     b = [[0, 7, 0, 0], [0, 0, 7, 7], [0, 0, 0, 7], [0, 7, 0, 0]]
-    g = Game()
-    for i in range(11):
-        g.add_two_four(b)
+    # g = Game() TODO find out what he means with this
+    # for i in range(11):
+    #     g.add_two_four(b)
+
 
 def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
-def get_expectimax_move(b):
-    pass
+
+def get_expectimax(node, depth, player):
+    answer = get_expectimax_move(node, depth, player)
+    return answer.direction
+
+
+# direction = model.get_expectimax_move(model.Node(self.board), model.MAX_DEPTH, "YOU") First call
+def get_expectimax_move(node, depth, player):
+    if depth == 0 or move_exists(node.b) is False:
+        return node
+    if player == "YOU":
+        value = node
+        node.generate_children(node.b)
+        for child in node.children:
+            value = max(value, get_expectimax_move(child, depth-1, "EXP"))
+        return value
+    else:  # Player = EXP
+        value = Node(add_two_four(node.b), node.direction)
+        get_expectimax_move(value, depth-1, "YOU")
+        return value
+
+
+class Node:
+
+    def __init__(self, b, direction=None):
+        self.b = b
+        self.direction = direction
+        self.children = []
+        self.value = game_score(b)
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __gt__(self, other):
+        return self.value > other.value
+
+    def __lt__(self, other):
+        return self.value < other.value
+
+    def generate_children(self, b):
+        self.children = [Node(merge_left(b), "left"), Node(merge_right(b), "right"),
+                         Node(merge_down(b), "down"), Node(merge_up(b), "up")]
+
+
+def game_score(b):
+    score = 0
+    for i in b:
+        for j in i:
+            score += j
+    return score
+
