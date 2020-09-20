@@ -255,7 +255,7 @@ def score(player, board):
     return total_score
 
 
-GLOBAL_DEPTH = 6
+GLOBAL_DEPTH = 7
 
 
 def negamaxABpruning(depth, player, board, current, A=-1000, B=1000):
@@ -293,7 +293,7 @@ def negamaxABpruning(depth, player, board, current, A=-1000, B=1000):
     return optimal
 
 
-def negamax(depth, player, board, current):
+def negamax(depth, player, board, current, A = None, B = None):
     optimal = None
     move = None
     if depth == 0 or (not any_legal_move(next_player(board, player), board) and any_legal_move(player, board)):
@@ -336,4 +336,4 @@ def random_move1(depth, player, board, current, A=None, B=None):
 
 # Play strategies
 if __name__ == "__main__":
-    play(negamaxABpruning, random_move1)
+    play(negamaxABpruning, negamax)
