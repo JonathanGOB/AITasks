@@ -1,7 +1,6 @@
 import random
 import itertools
 import math
-import copy
 import numpy
 
 MAX_DEPTH = 6
@@ -165,15 +164,15 @@ def get_random_move():
 
 
 def get_move(board):
-    h_move = "left"
-    h_score = -1
+    h_move = None
+    h_score = -math.inf
 
     depth = 5
     if len(get_empty_cells(board)) < 5:  # If the empty cells are more than 4 set the depth to 5 to increase performance
         depth = 6
 
     for direction in MERGE_FUNCTIONS.keys():
-        new_board = copy.deepcopy(board)
+        new_board = board[:]
         next_step = play_move(new_board, direction)
         if new_board == next_step:  # Check if the direction doesn't change the board for performance boost
             continue
@@ -187,7 +186,7 @@ def get_move(board):
 def value(board, depth, player):
     if depth == 0:
         if not move_exists(board):  # if depth 0 move would result in loss return -10000 score
-            return -100000
+            return -math.inf
         return calculate_heuristic(board)
     if player == "MAX":
         return max_value(board, depth)
@@ -198,23 +197,21 @@ def value(board, depth, player):
 def max_value(board, depth):
     v = -math.inf
     for direction in MERGE_FUNCTIONS.keys():
-        new_board = play_move(board, direction)
+        new_board = MERGE_FUNCTIONS[direction](board)
         v = max(v, value(new_board, depth-1, "EXP"))
     return v
 
 
 def exp_value(board, depth):
     total = 0
-    num = 0
     for cell in get_empty_cells(board):  # Check the score for every empty cell
-        new_board = copy.deepcopy(board)
+        new_board = board[:]
         x, y = cell
         new_board[x][y] = 2  # Skip change is 4 for performance boost
         total += value(new_board, depth-1, "MAX")
-        num += 1
-    if num == 0:
+    if depth == 0:
         return value(board, depth-1, "MAX")
-    return total/num
+    return total/depth
 
 
 def get_empty_cells(board):
@@ -226,32 +223,11 @@ def get_empty_cells(board):
     return empty_cells
 
 
-# def exp_value2(board, depth):  # Not working good
-#     total = 0
-#     num = 0
-#     for _ in range(get_empty_cells(board)):
-#         new_board = add_two_four(board)
-#         total += value(new_board, depth-1, "MAX")
-#         num += 1
-#     if num == 0:
-#         return value(board, depth-1, "MAX")
-#     return total/num
-#
-#
-# def get_empty_cells(board):
-#     empty_cells = 0
-#     for x in board:
-#         for y in x:
-#             if y == 0:
-#                 empty_cells += 1
-#     return empty_cells
-
-
 def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
     heuristic += top_left_heuristic(board)
     heuristic -= cluster_heuristics(board)
-    # heuristic += monotonic_heuristics(board)
+    heuristic += monotonic_heuristics(board)
     return heuristic
 
 
@@ -279,13 +255,13 @@ def cluster_heuristics(board):  # Give a penalty to cells with a different value
     return penalty
 
 
-# def monotonic_heuristics(board):
-#     cells = numpy.array(board)
-#     size = 4
-#     cells[cells < 1] = 0.1
-#     score1 = cells[1:size, 3]/cells[:size-1, 3]
-#     score2 = cells[3, 1:size]/cells[3, :size-1]
-#     score = numpy.sum(score1[score1 == 2])
-#     score += numpy.sum(score2[score2 == 2])
-#     return score * 20
+def monotonic_heuristics(board):
+    cells = numpy.array(board)
+    size = 4
+    cells[cells < 1] = 0.1
+    score1 = cells[1:size, 3]/cells[:size-1, 3]
+    score2 = cells[3, 1:size]/cells[3, :size-1]
+    score = numpy.sum(score1[score1 == 2])
+    score += numpy.sum(score2[score2 == 2])
+    return score * 20
 
