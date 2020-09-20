@@ -168,12 +168,16 @@ def get_move(board):
     h_move = "left"
     h_score = -1
 
+    depth = 5
+    if len(get_empty_cells(board)) < 5:  # If the empty cells are more than 4 set the depth to 5 to increase performance
+        depth = 6
+
     for direction in MERGE_FUNCTIONS.keys():
         new_board = copy.deepcopy(board)
         next_step = play_move(new_board, direction)
         if new_board == next_step:  # Check if the direction doesn't change the board for performance boost
             continue
-        score = value(board, MAX_DEPTH, "MAX")
+        score = value(board, depth, "MAX")
         if score > h_score:
             h_score = score
             h_move = direction
@@ -182,7 +186,7 @@ def get_move(board):
 
 def value(board, depth, player):
     if depth == 0:
-        if not move_exists(board):
+        if not move_exists(board):  # if depth 0 move would result in loss return -10000 score
             return -100000
         return calculate_heuristic(board)
     if player == "MAX":
@@ -247,7 +251,7 @@ def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
     heuristic += top_left_heuristic(board)
     heuristic -= cluster_heuristics(board)
-    heuristic += monotonic_heuristics(board)
+    # heuristic += monotonic_heuristics(board)
     return heuristic
 
 
@@ -275,13 +279,13 @@ def cluster_heuristics(board):  # Give a penalty to cells with a different value
     return penalty
 
 
-def monotonic_heuristics(board):
-    cells = numpy.array(board)
-    size = 4
-    cells[cells < 1] = 0.1
-    score1 = cells[1:size, 3]/cells[:size-1, 3]
-    score2 = cells[3, 1:size]/cells[3, :size-1]
-    score = numpy.sum(score1[score1 == 2])
-    score += numpy.sum(score2[score2 == 2])
-    return score * 20
+# def monotonic_heuristics(board):
+#     cells = numpy.array(board)
+#     size = 4
+#     cells[cells < 1] = 0.1
+#     score1 = cells[1:size, 3]/cells[:size-1, 3]
+#     score2 = cells[3, 1:size]/cells[3, :size-1]
+#     score = numpy.sum(score1[score1 == 2])
+#     score += numpy.sum(score2[score2 == 2])
+#     return score * 20
 
