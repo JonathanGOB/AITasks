@@ -181,8 +181,7 @@ def any_legal_move(player, board):
     # can player make any moves?
     return any(is_legal(sq, player, board) for sq in squares())
 
-def negamax(depth, player, board):
-    pass
+
 # Putting it all together
 
 # Each round consists of:
@@ -192,6 +191,7 @@ def negamax(depth, player, board):
 
 def play(black_strategy, white_strategy):
     # play a game of Othello and return the final board and score
+    global weights
     board, weights = initial_board()
     print(print_board(board))
     not_finished = True
@@ -210,6 +210,8 @@ def play(black_strategy, white_strategy):
             done_counter += 1
         if done_counter == 2:
             not_finished = False
+    print("score WHITE {} points".format(WHITE, board))
+    print("score BLACK {} points".format(BLACK, board))
 
 
 def next_player(board, prev_player):
@@ -220,8 +222,20 @@ def next_player(board, prev_player):
 
 def get_move(strategy, player, board):
     # call strategy(player, board) to get a move
-    strategy(15, player, board)
+    move = strategy(3, player, board, 1)
+    print(move)
+    make_move(move, player, board)
+    make_move(move, player, board)
     return True
+
+
+def result(player, board):
+    # compute player's score (number of player's pieces minus opponent's)
+    total_score = 0
+    for e in squares():
+        if board[e] == player:
+            total_score += 1
+    return total_score
 
 
 def score(player, board):
@@ -233,7 +247,35 @@ def score(player, board):
     return total_score
 
 
+def negamax(depth, player, board, current):
+    optimal = None
+    move = None
+    if depth == 0 or (not any_legal_move(next_player(board, player), board) and any_legal_move(player, board)):
+        return current * score(player, board)
+    if any_legal_move(player if current == 1 else next_player(board, player), board):
+        for e in legal_moves(player if current == 1 else next_player(board, player), board):
+            new_board = board[:]
+            make_move(e, player if current == 1 else next_player(new_board, player), new_board)
+            heuristic = -negamax(depth - 1, player, new_board, -current)
+            if optimal:
+                if heuristic > optimal:
+                    move = e
+                    optimal = heuristic
+            if not optimal:
+                move = e
+                optimal = heuristic
+    else:
+        new_board = board[:]
+        heuristic = -negamax(depth - 1, player, new_board, -current)
+        if optimal:
+            if heuristic > optimal:
+                optimal = heuristic
+        if not optimal:
+            optimal = heuristic
+
+    return move
+
 
 # Play strategies
 if __name__ == "__main__":
-    play(negamax,negamax)
+    play(negamax, negamax)
