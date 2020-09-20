@@ -31,7 +31,7 @@ This representation has two useful properties:
 # The outside edge is marked ?, empty squares are ., black is @, and white is o.
 # The black and white pieces represent the two players.
 import os
-import sys
+import random
 
 EMPTY, BLACK, WHITE, OUTER = '.', '@', 'o', '?'
 PIECES = (EMPTY, BLACK, WHITE, OUTER)
@@ -210,8 +210,8 @@ def play(black_strategy, white_strategy):
             done_counter += 1
         if done_counter == 2:
             not_finished = False
-    print("score WHITE {} points".format(WHITE, board))
-    print("score BLACK {} points".format(BLACK, board))
+    print("score WHITE {} points".format(result(WHITE, board)))
+    print("score BLACK {} points".format(result(BLACK, board)))
 
 
 def next_player(board, prev_player):
@@ -222,9 +222,8 @@ def next_player(board, prev_player):
 
 def get_move(strategy, player, board):
     # call strategy(player, board) to get a move
-    move = strategy(3, player, board, 1)
+    move = strategy(GLOBAL_DEPTH, player, board, 1)
     print(move)
-    make_move(move, player, board)
     make_move(move, player, board)
     return True
 
@@ -246,6 +245,7 @@ def score(player, board):
             total_score += 1 * weights[e] + 1
     return total_score
 
+GLOBAL_DEPTH = 4
 
 def negamax(depth, player, board, current):
     optimal = None
@@ -273,9 +273,15 @@ def negamax(depth, player, board, current):
         if not optimal:
             optimal = heuristic
 
-    return move
+    if GLOBAL_DEPTH == depth:
+        return move
+    return optimal
+
+def random_move(depth, player, board, current):
+    number = random.choice(legal_moves(player, board))
+    return number
 
 
 # Play strategies
 if __name__ == "__main__":
-    play(negamax, negamax)
+    play(negamax, random_move)
