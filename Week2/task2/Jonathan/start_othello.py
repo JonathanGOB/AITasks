@@ -336,4 +336,4 @@ def random_move1(depth, player, board, current, A=None, B=None):
 
 # Play strategies
 if __name__ == "__main__":
-    play(negamaxABpruning, negamax)
+    play(negamaxABpruning, random_move1)
