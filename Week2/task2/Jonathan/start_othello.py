@@ -225,7 +225,6 @@ def get_move(strategy, player, board):
     move = strategy(3, player, board, 1)
     print(move)
     make_move(move, player, board)
-    make_move(move, player, board)
     return True
 
 
