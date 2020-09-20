@@ -13,7 +13,7 @@ BACKGROUND_COLOR_DICT = {2:"#eee4da", 4:"#ede0c8", 8:"#f2b179", 16:"#f59563", 32
 
 FOREGROUND_COLOR_DICT = {2:"#776e65", 4:"#776e65"}
 DEFAULT_FOREGROUND_COLOR = "#f9f6f2"
-
+MAX_DEPTH = 3
 FONT = ("Verdana", 40, "bold")
 
 class MainApp(tk.Frame):
@@ -54,8 +54,8 @@ class MainApp(tk.Frame):
         self.update_idletasks() # redraw widgets
         
     def do_move(self):
-        direction = model.get_random_move()
-        # direction = model.get_expectimax_move(self.board)
+        #direction = model.get_random_move()
+        direction = model.get_expectimax_move(self.board, MAX_DEPTH, 1)
         if model.move_exists(self.board):
             self.board = model.play_move(self.board, direction)
             self.update_grid_cells()           # redraw grid

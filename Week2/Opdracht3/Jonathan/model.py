@@ -2,6 +2,8 @@ import random
 import itertools
 import math
 
+import numpy
+
 MAX_DEPTH = 3
 
 def merge_left(b):
@@ -136,5 +138,85 @@ def game_state(b):
 def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
-def get_expectimax_move(b):
-    pass
+def exp_value(board, depth, character):
+    total = 0
+    num = 0
+    for cell in get_empty_cells(board):  # Check the score for every empty cell
+        new_board = board[:]
+        x, y = cell
+        new_board[x][y] = 2  # Skip change is 4 for performance boost
+        total += -get_expectimax_move(new_board, depth-1, -character)
+        num += 1
+    if num == 0:
+        return -get_expectimax_move(board, depth-1, -character)
+    return total/num
+
+def get_empty_cells(board):
+    empty_cells = []
+    for x in range(4):
+        for y in range(4):
+            if board[x][y] == 0:
+                empty_cells.append([x, y])
+    return empty_cells
+
+def get_expectimax_move(board, depth, character):
+    a = -character * 1000
+    move = None
+    if not move_exists(board) or depth == 0:
+        return calculate_heuristic(board)
+    for direction in MERGE_FUNCTIONS.keys():
+        new_board = board[:]
+        if character == -1:
+            a = min(a, exp_value(new_board, depth-1, -character))
+        if character == 1:
+            play_move(new_board, direction)
+            a = max(a, -get_expectimax_move(new_board, depth-1, -character))
+            move = direction
+    return move if depth == MAX_DEPTH else a
+
+
+
+
+
+def calculate_heuristic(board):  # Get the sum of all different heuristics
+    heuristic = 0
+    heuristic += top_left_heuristic(board)
+    heuristic -= cluster_heuristics(board)
+    heuristic += monotonic_heuristics(board)
+    print(heuristic)
+    return heuristic
+
+
+def top_left_heuristic(b):  # Give higher score to top left cells
+    board = numpy.array(b)
+    h = numpy.array([[30, 15, 5, 3],
+                     [15, 5, 3, 1],
+                     [5, 3, 1, 0],
+                     [3, 1, 0, 0]])
+    return numpy.sum(h*board)
+
+
+def cluster_heuristics(board):  # Give a penalty to cells with a different value next to each other
+    penalty = 0
+    for x in range(4):
+        for y in range(4):
+            if y >= 0:  # left
+                penalty = penalty + abs(board[x][y] - board[x][y-1])
+            if x >= 0:  # top
+                penalty = penalty + abs(board[x][y] - board[x][y-1])
+            if y < 3:  # right
+                penalty = penalty + abs(board[x][y] - board[x][y+1])
+            if x < 3:  # bottom
+                penalty = penalty + abs(board[x][y] - board[x+1][y])
+    return penalty
+
+
+def monotonic_heuristics(board):
+    cells = numpy.array(board)
+    size = 4
+    cells[cells < 1] = 0.1
+    score1 = cells[1:size, 3]/cells[:size-1, 3]
+    score2 = cells[3, 1:size]/cells[3, :size-1]
+    score = numpy.sum(score1[score1 == 2])
+    score += numpy.sum(score2[score2 == 2])
+    return score * 20

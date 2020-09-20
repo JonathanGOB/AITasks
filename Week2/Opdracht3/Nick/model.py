@@ -5,6 +5,7 @@ import copy
 import numpy
 
 MAX_DEPTH = 6
+LARGENUM = 100000000
 
 
 def merge_left(b):
@@ -166,55 +167,67 @@ def get_random_move():
 
 def get_move(board):
     h_move = "left"
-    h_score = -1
+    h_score = -LARGENUM
 
-    depth = 5
-    if len(get_empty_cells(board)) < 5:  # If the empty cells are more than 4 set the depth to 5 to increase performance
-        depth = 6
+    # depth = 5
+    # if len(get_empty_cells(board)) < 5:  # If the empty cells are more than 4 set the depth to 5 to increase performance
+    #     depth = 6
+    depth = 3
 
     for direction in MERGE_FUNCTIONS.keys():
-        new_board = copy.deepcopy(board)
-        next_step = play_move(new_board, direction)
+        new_board = board[:]
+        next_step = MERGE_FUNCTIONS[direction](new_board)
         if new_board == next_step:  # Check if the direction doesn't change the board for performance boost
             continue
-        score = value(board, depth, "MAX")
+        score = value(board, depth, "MAX", 1.0)
         if score > h_score:
             h_score = score
             h_move = direction
     return h_move
 
 
-def value(board, depth, player):
+def value(board, depth, player, prob):
     if depth == 0:
         if not move_exists(board):  # if depth 0 move would result in loss return -10000 score
             return -100000
         return calculate_heuristic(board)
     if player == "MAX":
-        return max_value(board, depth)
+        return max_value(board, depth, prob)
     else:
-        return exp_value(board, depth)
+        return exp_value(board, depth, prob)
 
 
-def max_value(board, depth):
-    v = -math.inf
+def max_value(board, depth, prob):
+    v = -LARGENUM
     for direction in MERGE_FUNCTIONS.keys():
-        new_board = play_move(board, direction)
-        v = max(v, value(new_board, depth-1, "EXP"))
+        new_board = board[:]
+        next_step = MERGE_FUNCTIONS[direction](board)
+        if new_board == next_step:  # Check if the direction doesn't change the board for performance boost
+            continue
+        v = max(v, value(new_board, depth-1, "EXP", prob))
     return v
 
 
-def exp_value(board, depth):
-    total = 0
-    num = 0
-    for cell in get_empty_cells(board):  # Check the score for every empty cell
-        new_board = copy.deepcopy(board)
-        x, y = cell
-        new_board[x][y] = 2  # Skip change is 4 for performance boost
-        total += value(new_board, depth-1, "MAX")
-        num += 1
-    if num == 0:
-        return value(board, depth-1, "MAX")
-    return total/num
+def exp_value(board, depth, prob):
+    worst = LARGENUM
+    utility = 0
+    totalprobability = 0
+    for x, y in get_empty_cells(board):  # Check the score for every empty cell
+        new_board = board[:]
+        for probability, tilevalue in ((0.1, 4), (0.9, 2)):
+            pp = probability * prob
+            if 0.9 * pp < 0.1 and len(get_empty_cells(board)) > 4:
+                continue
+            new_board[x][y] = tilevalue
+            utility += probability * max_value(new_board, depth, pp)
+            totalprobability += probability
+    if totalprobability == 0:
+        utility = calculate_heuristic(board)
+    else:
+        utility /= totalprobability
+    if utility < worst:
+        worst = utility
+    return worst
 
 
 def get_empty_cells(board):
