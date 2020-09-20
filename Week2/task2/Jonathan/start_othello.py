@@ -245,7 +245,7 @@ def score(player, board):
             total_score += 1 * weights[e] + 1
     return total_score
 
-GLOBAL_DEPTH = 3
+GLOBAL_DEPTH = 4
 
 def negamax(depth, player, board, current):
     optimal = None
