@@ -4,7 +4,7 @@ import math
 import copy
 import numpy
 
-MAX_DEPTH = 3
+MAX_DEPTH = 6
 
 
 def merge_left(b):
@@ -169,14 +169,15 @@ def get_random_move():
 # search and evaluation function
 
 def get_move(board):
-    h_move = "left"
+    h_move = ""
     h_score = -1
 
     for direction in MERGE_FUNCTIONS.keys():
         new_board = copy.deepcopy(board)
-        if new_board == board:
+        next_step = play_move(new_board, direction)
+        if new_board == next_step:  # Check if the direction doesn't change the board, so skip
             continue
-        score = value(board, MAX_DEPTH, "YOU")
+        score = value(board, MAX_DEPTH, "MAX")
         if score > h_score:
             h_score = score
             h_move = direction
@@ -185,7 +186,7 @@ def get_move(board):
 
 def value(board, depth, player):
     if depth == 0:
-        if game_state(board) == "lose":
+        if not move_exists(board):
             return -100000
         return calculate_heuristic(board)
     if player == "MAX":
@@ -202,27 +203,89 @@ def max_value(board, depth):
     return v
 
 
+# def exp_value(board, depth):   TODO Not correct
+#     sum = 0
+#     num = 0
+#     for cell in get_empty_cells(board):
+#         new_board = copy.deepcopy(board)
+#         x, y = cell
+#         new_board[x][y] = 2
+#         sum += (0.9 * value(new_board, depth-1, "MAX"))
+#         new_board[x][y] = 4
+#         sum += (0.1 * value(new_board, depth-1, "MAX"))
+#         num += 1
+#     if num == 0:
+#         return value(board, depth-1, "MAX")
+#     return sum/num
+#
+#
+# def get_empty_cells(board):
+#     empty_cells = []
+#     count_x = -1
+#     for x in board:
+#         count_x += 1
+#         count_y = -1
+#         for y in x:
+#             count_y += 1
+#             if y == 0:
+#                 empty_cells.append([count_x, count_y])
+#     return empty_cells
 def exp_value(board, depth):
-    v = 0
-    # for successor in state:a
-        # p = probabilty(succesor)
-        # v += p * value(successor, depth-1, "MAX")
-    for direction in MERGE_FUNCTIONS.keys():
-        new_board = play_move(board, direction)
-        v = min(v, value(new_board, depth-1, "EXP"))
-    return v
+    total = 0
+    num = 0
+    for _ in range(get_empty_cells(board)):
+        new_board = add_two_four(board)
+        total += value(new_board, depth-1, "MAX")
+        num += 1
+    if num == 0:
+        return value(board, depth-1, "MAX")
+    return total/num
+
+
+def get_empty_cells(board):
+    empty_cells = 0
+    for x in board:
+        for y in x:
+            if y == 0:
+                empty_cells += 1
+    return empty_cells
 
 
 def calculate_heuristic(board):
     heuristic = 0
     heuristic += left_top_heuristic(board)
+    heuristic -= cluster_heuristics(board)
+    heuristic += monotonic_heuristics(board)
     return heuristic
 
 
-def left_top_heuristic(b):
+def left_top_heuristic(b):  # Give higher score to top left cells
     board = numpy.array(b)
-    h = numpy.array([30, 15, 15, 3],
-                         [15, 5, 3, 1],
-                         [5, 3, 1, 0],
-                         [3, 1, 0, 0])
+    h = numpy.array([[30, 15, 5, 3],
+                     [15, 5, 3, 1],
+                     [5, 3, 1, 0],
+                     [3, 1, 0, 0]])
     return numpy.sum(h*board)
+
+
+def cluster_heuristics(board):
+    cells = numpy.array(board)
+    size = 4
+    penalty = 0
+    penalty += numpy.sum(numpy.abs(cells[:size-2, :] - cells[1:size-1, :]))
+    penalty += numpy.sum(numpy.abs(cells[2:size, :] - cells[1:size-1, :]))
+    penalty += numpy.sum(numpy.abs(cells[:, :size-2] - cells[:, 1:size-1]))
+    penalty += numpy.sum(numpy.abs(cells[:, 2:size] - cells[:, 1:size-1]))
+    return penalty / 2
+
+
+def monotonic_heuristics(board):
+    cells = numpy.array(board)
+    size = 4
+    cells[cells < 1] = 0.1
+    score1 = cells[1:size, 3]/cells[:size-1, 3]
+    score2 = cells[3, 1:size]/cells[3, :size-1]
+    score = numpy.sum(score1[score1 == 2])
+    score += numpy.sum(score2[score2 == 2])
+    return score * 20
+
