@@ -2,6 +2,7 @@ import random
 import itertools
 import math
 import copy
+import numpy
 
 MAX_DEPTH = 3
 
@@ -168,15 +169,25 @@ def get_random_move():
 # search and evaluation function
 
 def get_move(board):
-    value(board, MAX_DEPTH, "YOU")
-    pass  # Needs to return direction
+    h_move = "left"
+    h_score = -1
+
+    for direction in MERGE_FUNCTIONS.keys():
+        new_board = copy.deepcopy(board)
+        if new_board == board:
+            continue
+        score = value(board, MAX_DEPTH, "YOU")
+        if score > h_score:
+            h_score = score
+            h_move = direction
+    return h_move
 
 
 def value(board, depth, player):
     if depth == 0:
         if game_state(board) == "lose":
             return -100000
-        return calculate_utility(board)
+        return calculate_heuristic(board)
     if player == "MAX":
         return max_value(board, depth)
     else:
@@ -193,7 +204,7 @@ def max_value(board, depth):
 
 def exp_value(board, depth):
     v = 0
-    # for successor in state:
+    # for successor in state:a
         # p = probabilty(succesor)
         # v += p * value(successor, depth-1, "MAX")
     for direction in MERGE_FUNCTIONS.keys():
@@ -202,5 +213,16 @@ def exp_value(board, depth):
     return v
 
 
-def calculate_utility(board):
-    pass  # calculate the score adding heuristic
+def calculate_heuristic(board):
+    heuristic = 0
+    heuristic += left_top_heuristic(board)
+    return heuristic
+
+
+def left_top_heuristic(b):
+    board = numpy.array(b)
+    h = numpy.array([30, 15, 15, 3],
+                         [15, 5, 3, 1],
+                         [5, 3, 1, 0],
+                         [3, 1, 0, 0])
+    return numpy.sum(h*board)

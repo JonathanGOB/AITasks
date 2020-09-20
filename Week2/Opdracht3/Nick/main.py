@@ -55,7 +55,7 @@ class MainApp(tk.Frame):
         
     def do_move(self):
         # direction = model.get_random_move()
-        direction = model.value(self.board)
+        direction = model.get_move(self.board)
         if model.move_exists(self.board):
             self.board = model.play_move(self.board, direction)
             self.update_grid_cells()           # redraw grid
