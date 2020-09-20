@@ -173,11 +173,10 @@ def get_move(board):
         depth = 6
 
     for direction in MERGE_FUNCTIONS.keys():
-        new_board = board[:]
-        next_step = play_move(new_board, direction)
-        if new_board == next_step:  # Check if the direction doesn't change the board for performance boost
+        new_board = MERGE_FUNCTIONS[direction](board)
+        if board == new_board:  # Check if the direction doesn't change the board for performance boost
             continue
-        score = value(board, depth, "MAX")
+        score = value(new_board, depth, "MAX")
         if score > h_score:
             h_score = score
             h_move = direction
