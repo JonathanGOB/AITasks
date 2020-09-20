@@ -181,7 +181,8 @@ def any_legal_move(player, board):
     # can player make any moves?
     return any(is_legal(sq, player, board) for sq in squares())
 
-
+def negamax(depth, player, board):
+    pass
 # Putting it all together
 
 # Each round consists of:
@@ -219,7 +220,7 @@ def next_player(board, prev_player):
 
 def get_move(strategy, player, board):
     # call strategy(player, board) to get a move
-    #strategy(player, board)
+    strategy(15, player, board)
     return True
 
 
@@ -235,4 +236,4 @@ def score(player, board):
 
 # Play strategies
 if __name__ == "__main__":
-    play(1,2)
+    play(negamax,negamax)
