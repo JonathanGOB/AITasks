@@ -268,15 +268,19 @@ def left_top_heuristic(b):  # Give higher score to top left cells
     return numpy.sum(h*board)
 
 
-def cluster_heuristics(board):
-    cells = numpy.array(board)
-    size = 4
+def cluster_heuristics(board):  # Give a penalty to cells with a different value next to each other
     penalty = 0
-    penalty += numpy.sum(numpy.abs(cells[:size-2, :] - cells[1:size-1, :]))
-    penalty += numpy.sum(numpy.abs(cells[2:size, :] - cells[1:size-1, :]))
-    penalty += numpy.sum(numpy.abs(cells[:, :size-2] - cells[:, 1:size-1]))
-    penalty += numpy.sum(numpy.abs(cells[:, 2:size] - cells[:, 1:size-1]))
-    return penalty / 2
+    for x in range(4):
+        for y in range(4):
+            if y >= 0:  # left
+                penalty = penalty + abs(board[x][y] - board[x][y-1])
+            if x >= 0:  # top
+                penalty = penalty + abs(board[x][y] - board[x][y-1])
+            if y < 3:  # right
+                penalty = penalty + abs(board[x][y] - board[x][y+1])
+            if x < 3:  # bottom
+                penalty = penalty + abs(board[x][y] - board[x+1][y])
+    return penalty
 
 
 def monotonic_heuristics(board):
