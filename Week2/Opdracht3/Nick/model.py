@@ -4,7 +4,7 @@ import math
 import numpy
 
 MAX_DEPTH = 6
-CHANCE_LIST = [[2, 0.9], [4, 0.1]]
+CHANCE_LIST = [[2, 0.9], [4, 0.1]]  # 90% change on 2, 10% on 4
 
 
 def merge_left(b):
@@ -155,7 +155,7 @@ def test():
     assert (merge_down(b)) == [(0, 0, 0, 0), (2, 0, 0, 0), (16, 0, 4, 0), (4, 8, 2, 0)]
     assert (move_exists(b)) == True
     b = [[0, 7, 0, 0], [0, 0, 7, 7], [0, 0, 0, 7], [0, 7, 0, 0]]
-    # g = Game() TODO find out what he means with this
+    # g = Game()
     # for i in range(11):
     #     g.add_two_four(b)
 
@@ -229,7 +229,6 @@ def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
     heuristic += top_left_heuristic(board)
     heuristic -= cluster_heuristics(board)
-    # heuristic += monotonic_heuristics(board)
     return heuristic
 
 
@@ -256,14 +255,4 @@ def cluster_heuristics(board):  # Give a penalty to cells with a different value
                 penalty = penalty + abs(board[x][y] - board[x+1][y])
     return penalty
 
-
-# def monotonic_heuristics(board):
-#     cells = numpy.array(board)
-#     size = 4
-#     cells[cells < 1] = 0.1
-#     score1 = cells[1:size, 3]/cells[:size-1, 3]
-#     score2 = cells[3, 1:size]/cells[3, :size-1]
-#     score = numpy.sum(score1[score1 == 2])
-#     score += numpy.sum(score2[score2 == 2])
-#     return score * 20
 
