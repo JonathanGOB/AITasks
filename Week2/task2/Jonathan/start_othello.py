@@ -212,7 +212,7 @@ def play(black_strategy, white_strategy):
             not_finished = False
     print("score WHITE {} points".format(result(WHITE, board)))
     print("score BLACK {} points".format(result(BLACK, board)))
-    print("MAX TIME {}".format(GLOBAL_TIME["TIME"]))
+    print("MAX TIME {} DEPTH {}".format(GLOBAL_TIME["TIME"], GLOBAL_DEPTH))
 
 
 def next_player(board, prev_player):
@@ -230,7 +230,7 @@ def get_move(strategy, player, board):
     move = strategy(GLOBAL_DEPTH, player, board, 1)
     t1 = time.process_time()
     if GLOBAL_TIME["TIME"] < t1 - t0:
-        if strategy.__name__ == "negamax":
+        if strategy.__name__ == "negamaxABpruning":
             GLOBAL_TIME["TIME"] = t1 - t0
             print(strategy.__name__, "time  {} ".format(t1 - t0))
     make_move(move, player, board)
