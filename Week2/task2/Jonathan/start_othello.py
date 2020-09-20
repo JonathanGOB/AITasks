@@ -32,6 +32,7 @@ This representation has two useful properties:
 # The black and white pieces represent the two players.
 import os
 import random
+import time
 
 EMPTY, BLACK, WHITE, OUTER = '.', '@', 'o', '?'
 PIECES = (EMPTY, BLACK, WHITE, OUTER)
@@ -200,7 +201,6 @@ def play(black_strategy, white_strategy):
     while not_finished:
         if next_player(board, current_player):
             current_player = next_player(board, current_player)
-            print(current_player)
             get_move(black_strategy if current_player == BLACK else white_strategy, current_player, board)
             os.system('cls')
             print(print_board(board))
@@ -212,6 +212,7 @@ def play(black_strategy, white_strategy):
             not_finished = False
     print("score WHITE {} points".format(result(WHITE, board)))
     print("score BLACK {} points".format(result(BLACK, board)))
+    print("MAX TIME {}".format(GLOBAL_TIME["TIME"]))
 
 
 def next_player(board, prev_player):
@@ -220,10 +221,18 @@ def next_player(board, prev_player):
     return antogonist if any_legal_move(antogonist, board) else None
 
 
+GLOBAL_TIME = {"TIME": 0}
+
+
 def get_move(strategy, player, board):
     # call strategy(player, board) to get a move
+    t0 = time.process_time()
     move = strategy(GLOBAL_DEPTH, player, board, 1)
-    print(move)
+    t1 = time.process_time()
+    if GLOBAL_TIME["TIME"] < t1 - t0:
+        if strategy.__name__ == "negamax":
+            GLOBAL_TIME["TIME"] = t1 - t0
+            print(strategy.__name__, "time  {} ".format(t1 - t0))
     make_move(move, player, board)
     return True
 
@@ -245,7 +254,44 @@ def score(player, board):
             total_score += 1 * weights[e] + 1
     return total_score
 
-GLOBAL_DEPTH = 4
+
+GLOBAL_DEPTH = 6
+
+
+def negamaxABpruning(depth, player, board, current, A=-1000, B=1000):
+    optimal = None
+    move = None
+    if depth == 0 or (not any_legal_move(next_player(board, player), board) and any_legal_move(player, board)):
+        return current * score(player, board)
+    if any_legal_move(player if current == 1 else next_player(board, player), board):
+        for e in legal_moves(player if current == 1 else next_player(board, player), board):
+            new_board = board[:]
+            make_move(e, player if current == 1 else next_player(new_board, player), new_board)
+            heuristic = -negamaxABpruning(depth - 1, player, new_board, -current, -A, -B)
+            A = max(A, heuristic)
+            if optimal:
+                if heuristic > optimal:
+                    move = e
+                    optimal = heuristic
+            if not optimal:
+                move = e
+                optimal = heuristic
+            if A >= B:
+                break
+    else:
+        new_board = board[:]
+        heuristic = -negamaxABpruning(depth - 1, player, new_board, -current)
+        A = max(A, heuristic)
+        if optimal:
+            if heuristic > optimal:
+                optimal = heuristic
+        if not optimal:
+            optimal = heuristic
+
+    if GLOBAL_DEPTH == depth:
+        return move
+    return optimal
+
 
 def negamax(depth, player, board, current):
     optimal = None
@@ -277,11 +323,17 @@ def negamax(depth, player, board, current):
         return move
     return optimal
 
+
 def random_move(depth, player, board, current):
+    number = random.choice(legal_moves(player, board))
+    return number
+
+
+def random_move1(depth, player, board, current, A=None, B=None):
     number = random.choice(legal_moves(player, board))
     return number
 
 
 # Play strategies
 if __name__ == "__main__":
-    play(negamax, random_move)
+    play(negamaxABpruning, random_move1)

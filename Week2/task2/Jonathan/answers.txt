@@ -1,0 +1,6 @@
+A) is al gedaan
+B) is al gedaan
+C) Tellen van stenen betekent niet dat je een goede positie hebt in het spel.
+Heuristiek toegepast op basis van weights op een coordinaat.
+D) 4 Diepte max. Bij 5 doet het ongeveer max 6 seconden. Bij vier 1 seconden ongeveer
+E) pruning added
