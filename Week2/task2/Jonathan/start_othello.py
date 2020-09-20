@@ -205,6 +205,7 @@ def play(black_strategy, white_strategy):
             print(print_board(board))
             done_counter = 0
         else:
+            current_player = next_player(board, current_player)
             done_counter += 1
         if done_counter == 2:
             not_finished = False
