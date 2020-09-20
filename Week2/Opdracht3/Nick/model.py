@@ -164,18 +164,14 @@ def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
 
-# direction = model.value(self.board) First call
-# expected value is 0.1 * 4 + 0.9 * 2
-# search and evaluation function
-
 def get_move(board):
-    h_move = ""
+    h_move = "left"
     h_score = -1
 
     for direction in MERGE_FUNCTIONS.keys():
         new_board = copy.deepcopy(board)
         next_step = play_move(new_board, direction)
-        if new_board == next_step:  # Check if the direction doesn't change the board, so skip
+        if new_board == next_step:  # Check if the direction doesn't change the board for performance boost
             continue
         score = value(board, MAX_DEPTH, "MAX")
         if score > h_score:
@@ -206,10 +202,10 @@ def max_value(board, depth):
 def exp_value(board, depth):
     total = 0
     num = 0
-    for cell in get_empty_cells(board):
+    for cell in get_empty_cells(board):  # Check the score for every empty cell
         new_board = copy.deepcopy(board)
         x, y = cell
-        new_board[x][y] = 2
+        new_board[x][y] = 2  # Skip change is 4 for performance boost
         total += value(new_board, depth-1, "MAX")
         num += 1
     if num == 0:
@@ -226,7 +222,7 @@ def get_empty_cells(board):
     return empty_cells
 
 
-# def exp_value(board, depth):  TODO not working good
+# def exp_value2(board, depth):  # Not working good
 #     total = 0
 #     num = 0
 #     for _ in range(get_empty_cells(board)):
@@ -247,15 +243,15 @@ def get_empty_cells(board):
 #     return empty_cells
 
 
-def calculate_heuristic(board):
+def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
-    heuristic += left_top_heuristic(board)
+    heuristic += top_left_heuristic(board)
     heuristic -= cluster_heuristics(board)
     heuristic += monotonic_heuristics(board)
     return heuristic
 
 
-def left_top_heuristic(b):  # Give higher score to top left cells
+def top_left_heuristic(b):  # Give higher score to top left cells
     board = numpy.array(b)
     h = numpy.array([[30, 15, 5, 3],
                      [15, 5, 3, 1],
