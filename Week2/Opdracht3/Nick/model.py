@@ -4,6 +4,7 @@ import math
 import numpy
 
 MAX_DEPTH = 6
+CHANCE_LIST = [[2, 0.9], [4, 0.1]]
 
 
 def merge_left(b):
@@ -207,8 +208,10 @@ def exp_value(board, depth):
     for cell in get_empty_cells(board):  # Check the score for every empty cell
         new_board = board[:]
         x, y = cell
-        new_board[x][y] = 2  # Skip change is 4 for performance boost
-        total += value(new_board, depth-1, "MAX")
+        for z in range(2):
+            new_board[x][y] = CHANCE_LIST[z][0]
+            p = CHANCE_LIST[z][1]
+            total += p * value(new_board, depth-1, "MAX")
     if depth == 0:
         return value(board, depth-1, "MAX")
     return total/depth
@@ -227,7 +230,7 @@ def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
     heuristic += top_left_heuristic(board)
     heuristic -= cluster_heuristics(board)
-    heuristic += monotonic_heuristics(board)
+    # heuristic += monotonic_heuristics(board)
     return heuristic
 
 
@@ -255,13 +258,13 @@ def cluster_heuristics(board):  # Give a penalty to cells with a different value
     return penalty
 
 
-def monotonic_heuristics(board):
-    cells = numpy.array(board)
-    size = 4
-    cells[cells < 1] = 0.1
-    score1 = cells[1:size, 3]/cells[:size-1, 3]
-    score2 = cells[3, 1:size]/cells[3, :size-1]
-    score = numpy.sum(score1[score1 == 2])
-    score += numpy.sum(score2[score2 == 2])
-    return score * 20
+# def monotonic_heuristics(board):
+#     cells = numpy.array(board)
+#     size = 4
+#     cells[cells < 1] = 0.1
+#     score1 = cells[1:size, 3]/cells[:size-1, 3]
+#     score2 = cells[3, 1:size]/cells[3, :size-1]
+#     score = numpy.sum(score1[score1 == 2])
+#     score += numpy.sum(score2[score2 == 2])
+#     return score * 20
 
