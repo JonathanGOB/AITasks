@@ -203,38 +203,13 @@ def max_value(board, depth):
     return v
 
 
-# def exp_value(board, depth):   TODO Not correct
-#     sum = 0
-#     num = 0
-#     for cell in get_empty_cells(board):
-#         new_board = copy.deepcopy(board)
-#         x, y = cell
-#         new_board[x][y] = 2
-#         sum += (0.9 * value(new_board, depth-1, "MAX"))
-#         new_board[x][y] = 4
-#         sum += (0.1 * value(new_board, depth-1, "MAX"))
-#         num += 1
-#     if num == 0:
-#         return value(board, depth-1, "MAX")
-#     return sum/num
-#
-#
-# def get_empty_cells(board):
-#     empty_cells = []
-#     count_x = -1
-#     for x in board:
-#         count_x += 1
-#         count_y = -1
-#         for y in x:
-#             count_y += 1
-#             if y == 0:
-#                 empty_cells.append([count_x, count_y])
-#     return empty_cells
 def exp_value(board, depth):
     total = 0
     num = 0
-    for _ in range(get_empty_cells(board)):
-        new_board = add_two_four(board)
+    for cell in get_empty_cells(board):
+        new_board = copy.deepcopy(board)
+        x, y = cell
+        new_board[x][y] = 2
         total += value(new_board, depth-1, "MAX")
         num += 1
     if num == 0:
@@ -243,12 +218,33 @@ def exp_value(board, depth):
 
 
 def get_empty_cells(board):
-    empty_cells = 0
-    for x in board:
-        for y in x:
-            if y == 0:
-                empty_cells += 1
+    empty_cells = []
+    for x in range(4):
+        for y in range(4):
+            if board[x][y] == 0:
+                empty_cells.append([x, y])
     return empty_cells
+
+
+# def exp_value(board, depth):  TODO not working good
+#     total = 0
+#     num = 0
+#     for _ in range(get_empty_cells(board)):
+#         new_board = add_two_four(board)
+#         total += value(new_board, depth-1, "MAX")
+#         num += 1
+#     if num == 0:
+#         return value(board, depth-1, "MAX")
+#     return total/num
+#
+#
+# def get_empty_cells(board):
+#     empty_cells = 0
+#     for x in board:
+#         for y in x:
+#             if y == 0:
+#                 empty_cells += 1
+#     return empty_cells
 
 
 def calculate_heuristic(board):
