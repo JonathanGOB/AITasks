@@ -35,8 +35,8 @@ def is_intersect(p1, p2, q1, q2):
 def onSegment(p, q, r):
     return distance(p, q) + distance(r, q) == distance(p, r)
 
-def dist(v1, v2):
-    dist = [(a - b)**2 for a, b in zip(v1, v2)]
+def dist(city1, city2):
+    dist = [(a - b)**2 for a, b in zip(city1, city2)]
     dist = math.sqrt(sum(dist))
     return dist
 
@@ -51,5 +51,4 @@ def two_opt(cities):
                     minchange = change;
                     mini = i; minj = j;
                     cities[mini + 1:minj + 1] = cities[mini + 1:minj + 1][::-1]
-
     return cities
