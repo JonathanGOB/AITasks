@@ -4,4 +4,4 @@ C) Je kan het vinden door een box om de lijn te maken en andere lijnen te vinden
 kijken naar de orientatie van de 4 punten en vervolgends bekijken of de orientatie niet met elkaar vergelijkt. Je moet
 wel kijken of de kruisingen toevoegen aan je total_tour length.
 D) 14 ~ 13 % beter, maar m'n algorithme duurt heel lang oude lengte 20980 nieuwe lengte 18132.9
-E) RC - Algo?
+E) O(N^3)
