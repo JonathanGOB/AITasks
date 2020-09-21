@@ -1,5 +1,8 @@
 import math
 
+import numpy as np
+
+
 def distance(A, B):
     return math.hypot(A.x - B.x, A.y - B.y)
 
@@ -32,23 +35,21 @@ def is_intersect(p1, p2, q1, q2):
 def onSegment(p, q, r):
     return distance(p, q) + distance(r, q) == distance(p, r)
 
+def dist(v1, v2):
+    dist = [(a - b)**2 for a, b in zip(v1, v2)]
+    dist = math.sqrt(sum(dist))
+    return dist
+
 def two_opt(cities):
-    tour = list(cities)
-    improved = True
-    cache = tour_length(tour)
-    while improved:
-        improved = False
-        for i in range(1, len(tour) - 2):
-            selected = [tour[::-1][i], tour[::-1][i -1]]
-            for j in range(i + 1, len(tour)):
-                comparison = [tour[::-1][j], tour[::-1][j-1]]
-                if j - i == 1:
-                    continue
-                if is_intersect(*selected, *comparison):
-                    new_tour = tour[:]
-                    new_tour[i:j] = tour[j-1:i-1:-1]
-                    if tour_length(new_tour) < cache:
-                        cache = tour_length(new_tour)
-                        tour = new_tour
-                        improved = True
-    return tour
+    minchange = -1
+    while minchange < 0:
+        minchange = 0
+        for i in range(0, len(cities) - 2):
+            for j in range(i + 2, len(cities) - 1):
+                change =  dist(cities[i], cities[j]) + dist(cities[i+1],cities[j+1]) - dist(cities[i],cities[i+1]) - dist(cities[j],cities[j+1]);
+                if (minchange > change):
+                    minchange = change;
+                    mini = i; minj = j;
+                    cities[mini + 1:minj + 1] = cities[mini + 1:minj + 1][::-1]
+
+    return cities
