@@ -52,10 +52,8 @@ def two_opt(cities):
         for i in range(0, len(cities) - 2):
             for j in range(i + 2, len(cities) - 1):
                 change = dist(cities[i], cities[j]) + dist(cities[i + 1], cities[j + 1]) - dist(cities[i], cities[
-                    i + 1]) - dist(cities[j], cities[j + 1]);
+                    i + 1]) - dist(cities[j], cities[j + 1])
                 if (minchange > change):
                     minchange = change;
-                    mini = i;
-                    minj = j;
-                    cities[mini + 1:minj + 1] = cities[mini + 1:minj + 1][::-1]
+                    cities[i + 1:j + 1] = cities[i + 1:j + 1][::-1]
     return cities
