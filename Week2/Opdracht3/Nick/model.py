@@ -231,7 +231,7 @@ def calculate_heuristic(board):  # Get the sum of all different heuristics
     return heuristic
 
 
-def snake_heuristic(b):  # Give higher score to top left cells 4^15
+def snake_heuristic(b):  # Give higher score in a snake pattern starting in the top left corner
     board = numpy.array(b)
     h = numpy.array([[pow(4, 15), pow(4, 14), pow(4, 13), pow(4, 12)],
                      [pow(4, 8), pow(4, 9), pow(4, 10), pow(4, 11)],
