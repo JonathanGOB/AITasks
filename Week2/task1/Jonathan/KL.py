@@ -1,8 +1,5 @@
 import math
 
-import numpy as np
-
-
 def distance(A, B):
     return math.hypot(A.x - B.x, A.y - B.y)
 
@@ -39,20 +36,14 @@ def onSegment(p, q, r):
     return distance(p, q) + distance(r, q) == distance(p, r)
 
 
-def dist(city1, city2):
-    dist = [(a - b) ** 2 for a, b in zip(city1, city2)]
-    dist = math.sqrt(sum(dist))
-    return dist
-
-
 def two_opt(cities):
     minchange = -1
     while minchange < 0:
         minchange = 0
         for i in range(0, len(cities) - 2):
             for j in range(i + 2, len(cities) - 1):
-                change = dist(cities[i], cities[j]) + dist(cities[i + 1], cities[j + 1]) - dist(cities[i], cities[
-                    i + 1]) - dist(cities[j], cities[j + 1])
+                change = distance(cities[i], cities[j]) + distance(cities[i + 1], cities[j + 1]) - distance(cities[i], cities[
+                    i + 1]) - distance(cities[j], cities[j + 1])
                 if (minchange > change):
                     minchange = change;
                     cities[i + 1:j + 1] = cities[i + 1:j + 1][::-1]
