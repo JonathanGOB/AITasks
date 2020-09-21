@@ -167,7 +167,6 @@ def get_random_move():
 def get_move(board):
     h_move = None
     h_score = -math.inf
-
     depth = 5
     if len(get_empty_cells(board)) < 5:  # If the empty cells are more than 4 set the depth to 5 to increase performance
         depth = 6
@@ -185,7 +184,7 @@ def get_move(board):
 
 def value(board, depth, player):
     if depth == 0:
-        if not move_exists(board):  # if depth 0 move would result in loss return -10000 score
+        if not move_exists(board):  # if depth 0 move would result in loss return -math.inf score
             return -math.inf
         return calculate_heuristic(board)
     if player == "MAX":
@@ -227,32 +226,32 @@ def get_empty_cells(board):
 
 def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
-    heuristic += top_left_heuristic(board)
-    heuristic -= cluster_heuristics(board)
+    heuristic += snake_heuristic(board)
+    # heuristic -= cluster_heuristics(board)
     return heuristic
 
 
-def top_left_heuristic(b):  # Give higher score to top left cells
+def snake_heuristic(b):  # Give higher score to top left cells 4^15
     board = numpy.array(b)
-    h = numpy.array([[30, 15, 5, 3],
-                     [15, 5, 3, 1],
-                     [5, 3, 1, 0],
-                     [3, 1, 0, 0]])
+    h = numpy.array([[pow(4, 15), pow(4, 14), pow(4, 13), pow(4, 12)],
+                     [pow(4, 8), pow(4, 9), pow(4, 10), pow(4, 11)],
+                     [pow(4, 7), pow(4, 6), pow(4, 5), pow(4, 4)],
+                     [pow(4, 0), pow(4, 1), pow(4, 2), pow(4, 3)]])
     return numpy.sum(h*board)
 
 
-def cluster_heuristics(board):  # Give a penalty to cells with a different value next to each other
-    penalty = 0
-    for x in range(4):
-        for y in range(4):
-            if y >= 0:  # left
-                penalty = penalty + abs(board[x][y] - board[x][y-1])
-            if x >= 0:  # top
-                penalty = penalty + abs(board[x][y] - board[x][y-1])
-            if y < 3:  # right
-                penalty = penalty + abs(board[x][y] - board[x][y+1])
-            if x < 3:  # bottom
-                penalty = penalty + abs(board[x][y] - board[x+1][y])
-    return penalty
+# def cluster_heuristics(board):  # Give a penalty to cells with a different value next to each other
+#     penalty = 0
+#     for x in range(4):
+#         for y in range(4):
+#             if y >= 0:  # left
+#                 penalty = penalty + abs(board[x][y] - board[x][y-1])
+#             if x >= 0:  # top
+#                 penalty = penalty + abs(board[x][y] - board[x][y-1])
+#             if y < 3:  # right
+#                 penalty = penalty + abs(board[x][y] - board[x][y+1])
+#             if x < 3:  # bottom
+#                 penalty = penalty + abs(board[x][y] - board[x+1][y])
+#     return penalty
 
 

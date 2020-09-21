@@ -3,3 +3,4 @@ venv
 .vscode/settings.json
 *.pyc
 week_1/Task2/jonathan/test.py
+/pyvenv.cfg
