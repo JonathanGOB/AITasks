@@ -3,9 +3,10 @@ import math
 def distance(A, B):
     return math.hypot(A.x - B.x, A.y - B.y)
 
+
 def tour_length(tour):
     # the total of distances between each pair of consecutive cities in the tour
-    return sum(distance(tour[i], tour[i-1])
+    return sum(distance(tour[i], tour[i - 1])
                for i in range(len(tour)))
 
 
@@ -19,6 +20,7 @@ def orientation(p1, p2, p3):
     else:
         return 0
 
+
 def is_intersect(p1, p2, q1, q2):
     op1 = orientation(p1, q1, p2)
     op2 = orientation(p1, q1, q2)
@@ -29,26 +31,20 @@ def is_intersect(p1, p2, q1, q2):
         return True
     return False
 
+
 def onSegment(p, q, r):
     return distance(p, q) + distance(r, q) == distance(p, r)
 
+
 def two_opt(cities):
-    tour = list(cities)
-    improved = True
-    cache = tour_length(tour)
-    while improved:
-        improved = False
-        for i in range(1, len(tour) - 2):
-            selected = [tour[::-1][i], tour[::-1][i -1]]
-            for j in range(i + 1, len(tour)):
-                comparison = [tour[::-1][j], tour[::-1][j-1]]
-                if j - i == 1:
-                    continue
-                if is_intersect(*selected, *comparison):
-                    new_tour = tour[:]
-                    new_tour[i:j] = tour[j-1:i-1:-1]
-                    if tour_length(new_tour) < cache:
-                        cache = tour_length(new_tour)
-                        tour = new_tour
-                        improved = True
-    return tour
+    minchange = -1
+    while minchange < 0:
+        minchange = 0
+        for i in range(0, len(cities) - 2):
+            for j in range(i + 2, len(cities) - 1):
+                change = distance(cities[i], cities[j]) + distance(cities[i + 1], cities[j + 1]) - distance(cities[i], cities[
+                    i + 1]) - distance(cities[j], cities[j + 1])
+                if (minchange > change):
+                    minchange = change;
+                    cities[i + 1:j + 1] = cities[i + 1:j + 1][::-1]
+    return cities
