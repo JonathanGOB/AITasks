@@ -203,16 +203,18 @@ def max_value(board, depth):
 
 def exp_value(board, depth):
     total = 0
+    amount = 0
     for cell in get_empty_cells(board):  # Check the score for every empty cell
+        amount += 1
         new_board = board[:]
         x, y = cell
         for z in range(2):
             new_board[x][y] = CHANCE_LIST[z][0]
             p = CHANCE_LIST[z][1]
             total += p * value(new_board, depth-1, "MAX")
-    if depth == 0:
+    if amount == 0:
         return value(board, depth-1, "MAX")
-    return total/depth
+    return total/amount
 
 
 def get_empty_cells(board):
@@ -226,11 +228,13 @@ def get_empty_cells(board):
 
 def calculate_heuristic(board):  # Get the sum of all different heuristics
     heuristic = 0
-    heuristic += snake_heuristic(board)
-    # heuristic -= cluster_heuristics(board)
+    # heuristic += snake_heuristic(board)
+    heuristic += top_left_heuristic(board)
+    heuristic -= cluster_heuristics(board)
     return heuristic
 
 
+# Snake heuristic performed worse than top_left - cluster heuristic
 def snake_heuristic(b):  # Give higher score in a snake pattern starting in the top left corner
     board = numpy.array(b)
     h = numpy.array([[pow(4, 15), pow(4, 14), pow(4, 13), pow(4, 12)],
@@ -240,18 +244,27 @@ def snake_heuristic(b):  # Give higher score in a snake pattern starting in the 
     return numpy.sum(h*board)
 
 
-# def cluster_heuristics(board):  # Give a penalty to cells with a different value next to each other
-#     penalty = 0
-#     for x in range(4):
-#         for y in range(4):
-#             if y >= 0:  # left
-#                 penalty = penalty + abs(board[x][y] - board[x][y-1])
-#             if x >= 0:  # top
-#                 penalty = penalty + abs(board[x][y] - board[x][y-1])
-#             if y < 3:  # right
-#                 penalty = penalty + abs(board[x][y] - board[x][y+1])
-#             if x < 3:  # bottom
-#                 penalty = penalty + abs(board[x][y] - board[x+1][y])
-#     return penalty
+def top_left_heuristic(b):  # Give higher score to top left cells
+    board = numpy.array(b)
+    h = numpy.array([[30, 15, 5, 3],
+                     [15, 5, 3, 1],
+                     [5, 3, 1, 0],
+                     [3, 1, 0, 0]])
+    return numpy.sum(h*board)
+
+
+def cluster_heuristics(board):  # Give a penalty to cells with a different value next to each other
+    penalty = 0
+    for x in range(4):
+        for y in range(4):
+            if y >= 0:  # left
+                penalty = penalty + abs(board[x][y] - board[x][y-1])
+            if x >= 0:  # top
+                penalty = penalty + abs(board[x][y] - board[x][y-1])
+            if y < 3:  # right
+                penalty = penalty + abs(board[x][y] - board[x][y+1])
+            if x < 3:  # bottom
+                penalty = penalty + abs(board[x][y] - board[x+1][y])
+    return penalty
 
 
