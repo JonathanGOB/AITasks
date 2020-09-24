@@ -1,4 +1,5 @@
 import time
+import copy
 
 # helper function
 def cross(A, B):
@@ -27,20 +28,6 @@ unit_list = ([cross(r, cols) for r in rows] +                             # 9 ro
 # units['A1'] is a list of lists, and sum(units['A1'],[]) flattens this list
 units = dict((s, [u for u in unit_list if s in u]) for s in cells)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in cells)
-
-def test():
-    # a set of tests that must pass
-    assert len(cells) == 81
-    assert len(unitlist) == 27
-    assert all(len(units[s]) == 3 for s in cells)
-    assert all(len(peers[s]) == 20 for s in cells)
-    assert units['C2'] == [['A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2'],
-                           ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9'],
-                           ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3']]
-    assert peers['C2'] == set(['A2', 'B2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2',
-                               'C1', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9',
-                               'A1', 'A3', 'B1', 'B3'])
-    print ('All tests pass.')
 
 def display(grid):
     # grid is a dict of {cell: string}, e.g. grid['A1'] = '1234'
@@ -75,13 +62,71 @@ def no_conflict(grid, c, v):
     # check if assignment is possible: value v not a value of a peer
     for p in peers[c]:
         if grid[p] == v:
-           return False # conflict
+            return False # conflict
     return True
+
+class Node:
+
+    def __init__(self, data, parent=None):
+        self.data = data
+        self.parent = parent
+        self.children = []
+        self.path = []
+
+    def add_child(self, child):
+        self.children.append(child)
+        child.path = self.path + [list(self.data.values())]
+        return child
+
+# def solve(grid, found):
+#     for key, value in grid.data.items():
+#         if value == digits:
+#             for i in range(1, 10):
+#                 if no_conflict(grid.data, key, str(i)):
+#                     new_grid = grid.add_child(Node(copy.deepcopy(grid.data), grid))
+#                     new_grid.data[key] = str(i)
+#                     if all(e != digits for e in new_grid.data.values()):
+#                         print(f"found {new_grid}")
+#                         found.append(new_grid)
+#                     if list(new_grid.data.values()) not in new_grid.path:
+#                         solve(new_grid, found)
+#     return found
 
 def solve(grid):
     # backtracking search a solution (DFS)
     # your code here
-    pass
+    visited = []
+    stack = [grid]
+    parentMap = dict()
+    found = []
+
+    while(len(stack)):
+        node = stack.pop()
+        hash_node = hash(frozenset(node.items()))
+        if hash_node in visited:
+            print("skipped")
+            continue
+        if hash_node not in visited:
+            visited.append(hash_node)
+        for key, value in node.items():
+            if value == digits:
+                for m in range(1, 10):
+                    if no_conflict(node, key, str(m)):
+                        new_grid = copy.deepcopy(node)
+                        new_grid[key] = str(m)
+                        if all(e != digits for e in new_grid.values()):
+                            print(f"found {new_grid}")
+                            #parentMap[frozenset(new_grid.items())] = node
+                            return new_grid
+                        if hash(frozenset(new_grid.items())) not in visited:
+                            #parentMap[frozenset(new_grid.items())] = node
+                            stack.append(new_grid)
+    return found, parentMap
+
+
+
+
+
 
 # minimum nr of clues for a unique solution is 17
 slist = [None for x in range(20)]
@@ -108,12 +153,13 @@ slist[19]= '1.....3.8.7.4..............2.3.1...........958.........5.6...7.....8
 
 for i,sudo in enumerate(slist):
     print('*** sudoku {0} ***'.format(i))
-    print(sudo)
     d = parse_string_to_dict(sudo)
+    print(display(d))
     start_time = time.time()
-    solve(d)
+    found= solve(d)
     end_time = time.time()
     hours, rem = divmod(end_time-start_time, 3600)
     minutes, seconds = divmod(rem, 60)
+    #print(display(d))
     print("duration [hh:mm:ss.ddd]: {:0>2}:{:0>2}:{:06.3f}".format(int(hours),int(minutes),seconds))
     print()
