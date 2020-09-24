@@ -95,19 +95,18 @@ class Node:
 def solve(grid):
     # backtracking search a solution (DFS)
     # your code here
-    visited = []
+    visited = set()
     stack = [grid]
     parentMap = dict()
     found = []
 
-    while(len(stack)):
+    while(stack):
         node = stack.pop()
         hash_node = hash(frozenset(node.items()))
         if hash_node in visited:
-            print("skipped")
             continue
         if hash_node not in visited:
-            visited.append(hash_node)
+            visited.add(hash_node)
         for key, value in node.items():
             if value == digits:
                 for m in range(1, 10):
@@ -116,10 +115,10 @@ def solve(grid):
                         new_grid[key] = str(m)
                         if all(e != digits for e in new_grid.values()):
                             print(f"found {new_grid}")
-                            #parentMap[frozenset(new_grid.items())] = node
+                            parentMap[frozenset(new_grid.items())] = node
                             return new_grid
                         if hash(frozenset(new_grid.items())) not in visited:
-                            #parentMap[frozenset(new_grid.items())] = node
+                            parentMap[frozenset(new_grid.items())] = node
                             stack.append(new_grid)
     return found, parentMap
 
