@@ -23,8 +23,8 @@ FOUR_NEIGHBORS = [(5, 3, 6, 7, 4)]
 
 def print_result(permutations):
     for pos, value in BOARD.items():
-        print(str(pos) + str(value))
-    print("Amount of permutations: " + str(permutations))
+        print(str(pos) + "=" + str(value), end=" ")
+    print("\nAmount of permutations: " + str(permutations))
 
 
 def generate_options():
