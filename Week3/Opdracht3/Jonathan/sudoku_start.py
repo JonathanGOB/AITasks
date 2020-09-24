@@ -1,10 +1,12 @@
 import time
 import copy
 
+
 # helper function
 def cross(A, B):
     # cross product of chars in string A and chars in string B
-    return [a+b for a in A for b in B]
+    return [a + b for a in A for b in B]
+
 
 #   1 2 3 4 .. 9
 # A
@@ -15,35 +17,37 @@ def cross(A, B):
 # I
 
 digits = '123456789'
-rows   = 'ABCDEFGHI'
-cols   = digits
-cells  = cross(rows, cols) # for 3x3 81 cells A1..9, B1..9, C1..9, ... 
+rows = 'ABCDEFGHI'
+cols = digits
+cells = cross(rows, cols)  # for 3x3 81 cells A1..9, B1..9, C1..9, ...
 
 # unit = a row, a column, a box; list of all units
-unit_list = ([cross(r, cols) for r in rows] +                             # 9 rows 
-             [cross(rows, c) for c in cols] +                             # 9 cols
-             [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]) # 9 units
+unit_list = ([cross(r, cols) for r in rows] +  # 9 rows
+             [cross(rows, c) for c in cols] +  # 9 cols
+             [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')])  # 9 units
 # peers is a dict {cell : list of peers}
 # every cell c has 20 peers p (i.e. cells that share a row, col, box)
 # units['A1'] is a list of lists, and sum(units['A1'],[]) flattens this list
 units = dict((s, [u for u in unit_list if s in u]) for s in cells)
-peers = dict((s, set(sum(units[s],[]))-set([s])) for s in cells)
+peers = dict((s, set(sum(units[s], [])) - set([s])) for s in cells)
+
 
 def display(grid):
     # grid is a dict of {cell: string}, e.g. grid['A1'] = '1234'
     print()
     for r in rows:
         for c in cols:
-            v = grid[r+c]
+            v = grid[r + c]
             # avoid the '123456789'
-            if v == '123456789': 
+            if v == '123456789':
                 v = '.'
-            print (''.join(v), end=' ')
+            print(''.join(v), end=' ')
             if c == '3' or c == '6': print('|', end='')
         print()
-        if r == 'C' or r == 'F': 
+        if r == 'C' or r == 'F':
             print('-------------------')
     print()
+
 
 def parse_string_to_dict(grid_string):
     # grid_string is a string like '4.....8.5.3..........7......2.....6....   '
@@ -58,12 +62,14 @@ def parse_string_to_dict(grid_string):
     # grid {'A1': '8', 'A2': '5', 'A3': '123456789',  }
     return dict(zip(cells, char_list2))
 
+
 def no_conflict(grid, c, v):
     # check if assignment is possible: value v not a value of a peer
     for p in peers[c]:
         if grid[p] == v:
-            return False # conflict
+            return False  # conflict
     return True
+
 
 class Node:
 
@@ -77,6 +83,7 @@ class Node:
         self.children.append(child)
         child.path = self.path + [list(self.data.values())]
         return child
+
 
 # def solve(grid, found):
 #     for key, value in grid.data.items():
@@ -96,31 +103,33 @@ def solve(grid):
     # backtracking search a solution (DFS)
     # your code here
 
+    # visited and stack
     visited, stack = set(), [grid]
-    graph = {frozenset(grid.items()): [None]}
 
+    # while there is a stack
     while stack:
         node = stack.pop()
+
+        # if all places filled
+        if digits not in node.values():
+            print(f"found {node}")
+            return node
+
+        # hash for dictionary for visited
         hash_node = hash(frozenset(node.items()))
+
         if hash_node not in visited:
             visited.add(hash_node)
+
             for key, value in node.items():
                 if value == digits:
                     for m in range(1, 10):
+                        
+                        # if number can be placed in spot
                         if no_conflict(node, key, str(m)):
                             new_grid = node.copy()
                             new_grid[key] = str(m)
-                            if digits not in new_grid.values():
-                                print(f"found {new_grid}")
-                                graph[frozenset(node.items())] = new_grid
-                                return new_grid
-                            if hash(frozenset(new_grid.items())) not in visited:
-                                graph[frozenset(grid.items())] = new_grid
-                                stack.append(new_grid)
-
-
-
-
+                            stack.append(new_grid)
 
 
 # minimum nr of clues for a unique solution is 17
@@ -135,16 +144,18 @@ slist[6] = '.5...98..7...6..21..2...6..............4.598.461....5.54.....9.1....
 slist[7] = '...17.69..4....5.........14.....1.....3.5716..9.....353.54.9....6.3....8..4......'
 slist[8] = '..6.4.5.......2.3.23.5..8765.3.........8.1.6.......7.1........5.6..3......76...8.'
 slist[9] = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-slist[10]= '85...24..72......9..4.........1.7..23.5...9...4...........8..7..17..........36.4.'
-slist[11]= '...5....2...3..85997...83..53...9...19.73...4...84...1.471..6...5...41...1...6247'
-slist[12]= '.....6....59.....82....8....45........3........6..3.54...325..6..................'
-slist[13]= '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-slist[14]= '8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4..'
-slist[15]= '6..3.2....5.....1..........7.26............543.........8.15........4.2........7..'
-slist[16]= '.6.5.1.9.1...9..539....7....4.8...7.......5.8.817.5.3.....5.2............76..8...'
-slist[17]= '..5...987.4..5...1..7......2...48....9.1.....6..2.....3..6..2.......9.7.......5..'
-slist[18]= '3.6.7...........518.........1.4.5...7.....6.....2......2.....4.....8.3.....5.....'
-slist[19]= '1.....3.8.7.4..............2.3.1...........958.........5.6...7.....8.2...4.......'
+slist[10] = '85...24..72......9..4.........1.7..23.5...9...4...........8..7..17..........36.4.'
+slist[11] = '...5....2...3..85997...83..53...9...19.73...4...84...1.471..6...5...41...1...6247'
+slist[12] = '.....6....59.....82....8....45........3........6..3.54...325..6..................'
+slist[13] = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
+slist[14] = '8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4..'
+slist[15] = '6..3.2....5.....1..........7.26............543.........8.15........4.2........7..'
+slist[16] = '.6.5.1.9.1...9..539....7....4.8...7.......5.8.817.5.3.....5.2............76..8...'
+slist[17] = '..5...987.4..5...1..7......2...48....9.1.....6..2.....3..6..2.......9.7.......5..'
+slist[18] = '3.6.7...........518.........1.4.5...7.....6.....2......2.....4.....8.3.....5.....'
+slist[19] = '1.....3.8.7.4..............2.3.1...........958.........5.6...7.....8.2...4.......'
+
+
 def test():
     # a set of tests that must pass
     assert len(cells) == 81
@@ -157,9 +168,10 @@ def test():
     assert peers['C2'] == set(['A2', 'B2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2',
                                'C1', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9',
                                'A1', 'A3', 'B1', 'B3'])
-    print ('All tests pass.')
+    print('All tests pass.')
 
-for i,sudo in enumerate(slist):
+
+for i, sudo in enumerate(slist):
     print('*** sudoku {0} ***'.format(i))
     d = parse_string_to_dict(sudo)
     print(display(d))
@@ -167,8 +179,8 @@ for i,sudo in enumerate(slist):
     start_time = time.time()
     found = solve(d)
     end_time = time.time()
-    hours, rem = divmod(end_time-start_time, 3600)
+    hours, rem = divmod(end_time - start_time, 3600)
     minutes, seconds = divmod(rem, 60)
-    #print(display(d))
-    print("duration [hh:mm:ss.ddd]: {:0>2}:{:0>2}:{:06.3f}".format(int(hours),int(minutes),seconds))
+    # print(display(d))
+    print("duration [hh:mm:ss.ddd]: {:0>2}:{:0>2}:{:06.3f}".format(int(hours), int(minutes), seconds))
     print()
