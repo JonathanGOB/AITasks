@@ -83,7 +83,7 @@ class Node:
 #         if value == digits:
 #             for i in range(1, 10):
 #                 if no_conflict(grid.data, key, str(i)):
-#                     new_grid = grid.add_child(Node(copy.deepcopy(grid.data), grid))
+#                     new_grid = grid.add_child(Node(copy.deepcopy(grid.data := grid[key] = str(i)), grid))
 #                     new_grid.data[key] = str(i)
 #                     if all(e != digits for e in new_grid.data.values()):
 #                         print(f"found {new_grid}")
@@ -95,32 +95,28 @@ class Node:
 def solve(grid):
     # backtracking search a solution (DFS)
     # your code here
-    visited = set()
-    stack = [grid]
-    parentMap = dict()
-    found = []
 
-    while(stack):
+    visited, stack = set(), [grid]
+    graph = {frozenset(grid.items()): [None]}
+
+    while stack:
         node = stack.pop()
         hash_node = hash(frozenset(node.items()))
-        if hash_node in visited:
-            continue
         if hash_node not in visited:
             visited.add(hash_node)
-        for key, value in node.items():
-            if value == digits:
-                for m in range(1, 10):
-                    if no_conflict(node, key, str(m)):
-                        new_grid = copy.deepcopy(node)
-                        new_grid[key] = str(m)
-                        if all(e != digits for e in new_grid.values()):
-                            print(f"found {new_grid}")
-                            parentMap[frozenset(new_grid.items())] = node
-                            return new_grid
-                        if hash(frozenset(new_grid.items())) not in visited:
-                            parentMap[frozenset(new_grid.items())] = node
-                            stack.append(new_grid)
-    return found, parentMap
+            for key, value in node.items():
+                if value == digits:
+                    for m in range(1, 10):
+                        if no_conflict(node, key, str(m)):
+                            new_grid = node.copy()
+                            new_grid[key] = str(m)
+                            if digits not in new_grid.values():
+                                print(f"found {new_grid}")
+                                graph[frozenset(node.items())] = new_grid
+                                return new_grid
+                            if hash(frozenset(new_grid.items())) not in visited:
+                                graph[frozenset(grid.items())] = new_grid
+                                stack.append(new_grid)
 
 
 
@@ -149,13 +145,27 @@ slist[16]= '.6.5.1.9.1...9..539....7....4.8...7.......5.8.817.5.3.....5.2.......
 slist[17]= '..5...987.4..5...1..7......2...48....9.1.....6..2.....3..6..2.......9.7.......5..'
 slist[18]= '3.6.7...........518.........1.4.5...7.....6.....2......2.....4.....8.3.....5.....'
 slist[19]= '1.....3.8.7.4..............2.3.1...........958.........5.6...7.....8.2...4.......'
+def test():
+    # a set of tests that must pass
+    assert len(cells) == 81
+    assert len(unit_list) == 27
+    assert all(len(units[s]) == 3 for s in cells)
+    assert all(len(peers[s]) == 20 for s in cells)
+    assert units['C2'] == [['A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2'],
+                           ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9'],
+                           ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3']]
+    assert peers['C2'] == set(['A2', 'B2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2',
+                               'C1', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9',
+                               'A1', 'A3', 'B1', 'B3'])
+    print ('All tests pass.')
 
 for i,sudo in enumerate(slist):
     print('*** sudoku {0} ***'.format(i))
     d = parse_string_to_dict(sudo)
     print(display(d))
+    print(d)
     start_time = time.time()
-    found= solve(d)
+    found = solve(d)
     end_time = time.time()
     hours, rem = divmod(end_time-start_time, 3600)
     minutes, seconds = divmod(rem, 60)
