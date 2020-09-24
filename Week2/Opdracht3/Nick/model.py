@@ -125,7 +125,7 @@ def add_two_four(b):
     random.shuffle(rows)
     random.shuffle(cols)
     distribution = [2] * 9 + [4]
-    for i, j in itertools.product(rows, rows):
+    for i, j in itertools.product(rows, cols):
         if b[i][j] == 0:
             b[i][j] = random.sample(distribution, 1)[0]
             return (b)
