@@ -122,7 +122,7 @@ def solve(grid):
             return node
 
         # str for dictionary for visited
-        visitor = parse_dict_to_string(node)
+        visitor = hash(frozenset(node.items()))
 
         if visitor not in visited:
             visited.add(visitor)
