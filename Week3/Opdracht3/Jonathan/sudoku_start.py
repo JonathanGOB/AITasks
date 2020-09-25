@@ -85,7 +85,7 @@ def solve(grid):
                     solve(grid)
                     grid[key] = digits
             return
-    print('\nThe Solution')
+    print('\nAnswer')
     print(display(grid))
     print(parse_dict_to_string(grid))
 
