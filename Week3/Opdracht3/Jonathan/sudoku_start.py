@@ -74,67 +74,56 @@ def no_conflict(grid, c, v):
     return True
 
 
-class Node:
-
-    def __init__(self, data, parent=None):
-        self.data = data
-        self.parent = parent
-        self.children = []
-        self.path = []
-
-    def add_child(self, child):
-        self.children.append(child)
-        child.path = self.path + [list(self.data.values())]
-        return child
-
-
-# def solve(grid, found):
-#     for key, value in grid.data.items():
-#         if value == digits:
-#             for i in range(1, 10):
-#                 if no_conflict(grid.data, key, str(i)):
-#                     new_grid = grid.add_child(Node(copy.deepcopy(grid.data := grid[key] = str(i)), grid))
-#                     new_grid.data[key] = str(i)
-#                     if all(e != digits for e in new_grid.data.values()):
-#                         print(f"found {new_grid}")
-#                         found.append(new_grid)
-#                     if list(new_grid.data.values()) not in new_grid.path:
-#                         solve(new_grid, found)
-#     return found
-
 def solve(grid):
     # backtracking search a solution (DFS)
     # your code here
+    for key, value in grid.items():
+        if value == digits:
+            for i in range(1, 10):
+                if no_conflict(grid, key, str(i)):
+                    grid[key] = str(i)
+                    solve(grid)
+                    grid[key] = digits
+            return
+    print('\nThe Solution')
+    print(display(grid))
+    print(parse_dict_to_string(grid))
 
-    # visited and stack
-    visited, stack = set(), [grid]
 
-    # while there is a stack
-    while stack:
-        node = stack.pop()
-
-        # if all places filled
-        if digits not in node.values():
-            print(f"found {node}")
-            return node
-
-        # str for dictionary for visited
-        visitor = parse_dict_to_string(node)
-        print(visitor)
-        os.system('cls')
-
-        if visitor not in visited:
-            visited.add(visitor)
-
-            for key, value in node.items():
-                if value == digits:
-                    for m in range(1, 10):
-                        # if number can be placed in spot
-                        if no_conflict(node, key, str(m)):
-                            new_grid = node.copy()
-                            new_grid[key] = str(m)
-                            if parse_dict_to_string(new_grid) not in visited:
-                                stack.append(new_grid)
+# def solve(grid):
+#     # backtracking search a solution (DFS)
+#     # your code here
+#
+#     # visited and stack
+#     visited, stack = set(), [grid]
+#
+#     # while there is a stack
+#     while stack:
+#         node = stack.pop()
+#
+#         # if all places filled
+#         if digits not in node.values():
+#             print(f"found {node}")
+#             return node
+#
+#         # str for dictionary for visited
+#         visitor = parse_dict_to_string(node)
+#         print(visitor)
+#         os.system('cls')
+#
+#         if visitor not in visited:
+#             visited.add(visitor)
+#             moves_list = []
+#             for key, value in node.items():
+#                 if value == digits:
+#                     for m in range(1, 10):
+#                         # if number can be placed in spot
+#                         if no_conflict(node, key, str(m)):
+#                             new_grid = node.copy()
+#                             new_grid[key] = str(m)
+#                             if parse_dict_to_string(new_grid) not in visited:
+#                                 moves_list.append(new_grid)
+#             stack.extend(moves_list)
 
 
 # minimum nr of clues for a unique solution is 17
@@ -186,6 +175,6 @@ for i, sudo in enumerate(slist):
     end_time = time.time()
     hours, rem = divmod(end_time - start_time, 3600)
     minutes, seconds = divmod(rem, 60)
-    # print(display(d))
+    print(display(d))
     print("duration [hh:mm:ss.ddd]: {:0>2}:{:0>2}:{:06.3f}".format(int(hours), int(minutes), seconds))
     print()
