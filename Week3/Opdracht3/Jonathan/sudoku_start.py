@@ -1,3 +1,4 @@
+import os
 import time
 import copy
 
@@ -62,6 +63,8 @@ def parse_string_to_dict(grid_string):
     # grid {'A1': '8', 'A2': '5', 'A3': '123456789',  }
     return dict(zip(cells, char_list2))
 
+def parse_dict_to_string(dict):
+    return "".join(e if e != digits else '.' for e in dict.values())
 
 def no_conflict(grid, c, v):
     # check if assignment is possible: value v not a value of a peer
@@ -115,21 +118,23 @@ def solve(grid):
             print(f"found {node}")
             return node
 
-        # hash for dictionary for visited
-        hash_node = hash(frozenset(node.items()))
+        # str for dictionary for visited
+        visitor = parse_dict_to_string(node)
+        print(visitor)
+        os.system('cls')
 
-        if hash_node not in visited:
-            visited.add(hash_node)
+        if visitor not in visited:
+            visited.add(visitor)
 
             for key, value in node.items():
                 if value == digits:
                     for m in range(1, 10):
-                        
                         # if number can be placed in spot
                         if no_conflict(node, key, str(m)):
                             new_grid = node.copy()
                             new_grid[key] = str(m)
-                            stack.append(new_grid)
+                            if parse_dict_to_string(new_grid) not in visited:
+                                stack.append(new_grid)
 
 
 # minimum nr of clues for a unique solution is 17
