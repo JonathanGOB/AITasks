@@ -74,56 +74,59 @@ def no_conflict(grid, c, v):
     return True
 
 
-def solve(grid):
-    # backtracking search a solution (DFS)
-    # your code here
-    for key, value in grid.items():
-        if value == digits:
-            for i in range(1, 10):
-                if no_conflict(grid, key, str(i)):
-                    grid[key] = str(i)
-                    solve(grid)
-                    grid[key] = digits
-            return
-    print('\nAnswer')
-    print(display(grid))
-    print(parse_dict_to_string(grid))
-
-
 # def solve(grid):
 #     # backtracking search a solution (DFS)
 #     # your code here
-#
-#     # visited and stack
-#     visited, stack = set(), [grid]
-#
-#     # while there is a stack
-#     while stack:
-#         node = stack.pop()
-#
-#         # if all places filled
-#         if digits not in node.values():
-#             print(f"found {node}")
-#             return node
-#
-#         # str for dictionary for visited
-#         visitor = parse_dict_to_string(node)
-#         print(visitor)
-#         os.system('cls')
-#
-#         if visitor not in visited:
-#             visited.add(visitor)
-#             moves_list = []
-#             for key, value in node.items():
-#                 if value == digits:
-#                     for m in range(1, 10):
-#                         # if number can be placed in spot
-#                         if no_conflict(node, key, str(m)):
-#                             new_grid = node.copy()
-#                             new_grid[key] = str(m)
-#                             if parse_dict_to_string(new_grid) not in visited:
-#                                 moves_list.append(new_grid)
-#             stack.extend(moves_list)
+#     for key, value in grid.items():
+#         if value == digits:
+#             for i in range(1, 10):
+#                 if no_conflict(grid, key, str(i)):
+#                     grid[key] = str(i)
+#                     solve(grid)
+#                     grid[key] = digits
+#             return
+#     print('\nAnswer')
+#     print(display(grid))
+#     print(parse_dict_to_string(grid))
+
+def get_next_empty_spot(node):
+    for key, value in node.items():
+        if value == digits:
+            return key
+
+def filter_moves(key, node):
+    return [str(e) for e in range(1,10) if no_conflict(node, key, str(e))]
+
+def move_actions(node):
+    key = get_next_empty_spot(node)
+    options = filter_moves(key, node)
+    for option in options:
+        new_node = node.copy()
+        new_node[key] = option
+        yield new_node
+
+def solve(grid):
+    # backtracking search a solution (DFS)
+    # your code here
+
+    # visited and stack
+    visited, stack = set(), [grid]
+
+    # while there is a stack
+    while stack:
+        node = stack.pop()
+
+        # if all places filled
+        if digits not in node.values():
+            print(f"found {node}")
+            return node
+
+        # str for dictionary for visited
+        visitor = parse_dict_to_string(node)
+
+        if visitor not in visited:
+            visited.add(visitor)
+            stack.extend([move_state for move_state in move_actions(node)])
 
 
 # minimum nr of clues for a unique solution is 17
@@ -175,6 +178,6 @@ for i, sudo in enumerate(slist):
     end_time = time.time()
     hours, rem = divmod(end_time - start_time, 3600)
     minutes, seconds = divmod(rem, 60)
-    print(display(d))
+    print(display(found))
     print("duration [hh:mm:ss.ddd]: {:0>2}:{:0>2}:{:06.3f}".format(int(hours), int(minutes), seconds))
     print()
