@@ -82,29 +82,30 @@ def solve(row_valid, col_valid, solution):
     print(col_has_1_at)
     visited, stack = set(), [(row_valid, col_valid)]
     while stack:
-        double = stack.pop()
-
-        if all(col == 0 for col in col_valid):
-            solution.append(double[0])
+        row_valid_inner, col_valid_inner = stack.pop()
+        if all(col == 0 for col in col_valid_inner):
+            solution.append(row_valid_inner)
             return solution
 
-        col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]))
+        visitor = "".join(str(x) for x in (row_valid_inner + col_valid_inner))
+        if visitor not in visited:
+            visited.add(visitor)
+            col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]) if col_valid_inner[x] != 0 else 1000)
+            print(col_lowest)
+            for k in col_has_1_at[col_lowest]:
+                new_row_valid = row_valid_inner[:]
+                new_col_valid = col_valid_inner[:]
+                select_row = a[k]
 
-        visited.add(col_lowest)
-        new_row_valid = double[0][:]
-        new_col_valid = double[1][:]
-        new_row_valid[col_has_1_at[col_lowest][0]] = 0
-        select_row = a[col_lowest]
+                for e in range(len(a)):
+                    if 1 in select_row & a[e]:
+                        new_row_valid[e] = 0
 
-        for e in range(len(a)):
-            if 1 in select_row & a[e]:
-                new_row_valid[e] = 0
+                for e in range(len(select_row)):
+                    if select_row[e] == 1:
+                        new_col_valid[e] = 0
 
-        for e in range(len(select_row)):
-            if select_row[e] == 1:
-                new_col_valid[e] = 0
-
-        stack.append((new_row_valid, new_col_valid))
+                stack.append((new_row_valid, new_col_valid))
 
 
 solve(row_valid, col_valid, [])
