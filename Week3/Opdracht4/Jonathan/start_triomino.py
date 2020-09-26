@@ -74,38 +74,34 @@ all_solutions = []
 def cover(r, row_valid, col_valid):
     # given the selected row r set related cols and rows invalid
     # appr. 75% of the time is spent in this function
-    pass
+    for e in range(len(a)):
+        if 1 in r & a[e]:
+            row_valid[e] = 0
+
+    for e in range(len(r)):
+        if r[e] == 1:
+            col_valid[e] = 0
 
 def solve(row_valid, col_valid, solution):
     # using Algoritm X, find all solutions (= set of rows) given valid/uncovered rows and cols
-    print(a)
-    print(col_has_1_at)
-    visited, stack = set(), [(row_valid, col_valid)]
+    visited, stack = set(), [(row_valid, col_valid, solution)]
     while stack:
-        row_valid_inner, col_valid_inner = stack.pop()
+        row_valid_inner, col_valid_inner, solution_inner = stack.pop()
         if all(col == 0 for col in col_valid_inner):
-            solution.append(row_valid_inner)
-            return solution
+            all_solutions.append(solution_inner)
 
         visitor = "".join(str(x) for x in (row_valid_inner + col_valid_inner))
         if visitor not in visited:
             visited.add(visitor)
-            col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]) if col_valid_inner[x] != 0 else 1000)
-            print(col_lowest)
+            col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]) if col_valid_inner[x] != 0 else float('inf'))
             for k in col_has_1_at[col_lowest]:
+                new_solution = solution_inner[:]
                 new_row_valid = row_valid_inner[:]
                 new_col_valid = col_valid_inner[:]
                 select_row = a[k]
-
-                for e in range(len(a)):
-                    if 1 in select_row & a[e]:
-                        new_row_valid[e] = 0
-
-                for e in range(len(select_row)):
-                    if select_row[e] == 1:
-                        new_col_valid[e] = 0
-
-                stack.append((new_row_valid, new_col_valid))
+                new_solution.append(k)
+                cover(select_row, new_row_valid, new_col_valid)
+                stack.append((new_row_valid, new_col_valid, new_solution))
 
 
 solve(row_valid, col_valid, [])
