@@ -177,6 +177,7 @@ def make_arc_consistent_iterative(grid, key, value):
         for r in peers[node.key]:
             if node.value in grid[r]:
                 if len(grid[r]) <= 1:
+                    conflict = True
                     break
                 else:
                     grid[r] = grid[r].replace(value, "")
