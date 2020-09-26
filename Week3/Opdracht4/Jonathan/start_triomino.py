@@ -17,6 +17,7 @@ triominoes = [np.array(trio) for trio in [
     ]
 ]
 
+
 def all_positions(T):
     # find all positions to place triomino T in matrix M (3 rows x 4 cols)
     rows, cols = T.shape
@@ -26,6 +27,7 @@ def all_positions(T):
             # place T in M
             M[i:i+rows, j:j+cols] = T
             yield M
+
 
 # matrix rows has 22 rows x 16 cols 
 # and has the following cols: HB VB L RL (0,0) (0,1) (0,2) (0,3) (1,0) .... (3,3)
@@ -40,8 +42,7 @@ for i, P in enumerate(triominoes):
         rows.append(list(A))
 
 a = np.array(rows)
-#print(a)
-#print()
+# print(a)
 
 # note that zip(*b) is the transpose of b
 cols = [list(i) for i in zip(*rows)]
@@ -77,7 +78,33 @@ def cover(r, row_valid, col_valid):
 
 def solve(row_valid, col_valid, solution):
     # using Algoritm X, find all solutions (= set of rows) given valid/uncovered rows and cols
-    pass
+    print(a)
+    print(col_has_1_at)
+    visited, stack = set(), [(row_valid, col_valid)]
+    while stack:
+        double = stack.pop()
+
+        if all(col == 0 for col in col_valid):
+            solution.append(double[0])
+            return solution
+
+        col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]))
+
+        visited.add(col_lowest)
+        new_row_valid = double[0][:]
+        new_col_valid = double[1][:]
+        new_row_valid[col_has_1_at[col_lowest][0]] = 0
+        select_row = a[col_lowest]
+
+        for e in range(len(a)):
+            if 1 in select_row & a[e]:
+                new_row_valid[e] = 0
+
+        for e in range(len(select_row)):
+            if select_row[e] == 1:
+                new_col_valid[e] = 0
+
+        stack.append((new_row_valid, new_col_valid))
 
 
 solve(row_valid, col_valid, [])
