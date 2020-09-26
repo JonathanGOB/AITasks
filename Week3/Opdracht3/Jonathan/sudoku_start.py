@@ -63,8 +63,10 @@ def parse_string_to_dict(grid_string):
     # grid {'A1': '8', 'A2': '5', 'A3': '123456789',  }
     return dict(zip(cells, char_list2))
 
+
 def parse_dict_to_string(dict):
     return "".join(e if e != digits else '.' for e in dict.values())
+
 
 def no_conflict(grid, c, v):
     # check if assignment is possible: value v not a value of a peer
@@ -94,8 +96,10 @@ def get_next_empty_spot(node):
         if value == digits:
             return key
 
+
 def filter_moves(key, node):
-    return [str(e) for e in range(1,10) if no_conflict(node, key, str(e))]
+    return [str(e) for e in range(1, 10) if no_conflict(node, key, str(e))]
+
 
 def move_actions(node):
     key = get_next_empty_spot(node)
@@ -104,6 +108,7 @@ def move_actions(node):
         new_node = node.copy()
         new_node[key] = option
         yield new_node
+
 
 def solve(grid):
     # backtracking search a solution (DFS)
@@ -117,7 +122,7 @@ def solve(grid):
         node = stack.pop()
 
         # if all places filled
-        if digits not in node.values():
+        if all(len(value) == 1 for value in node.values()):
             print(f"found {node}")
             return node
 
@@ -127,6 +132,68 @@ def solve(grid):
         if visitor not in visited:
             visited.add(visitor)
             stack.extend([move_state for move_state in move_actions(node)])
+
+
+def solve_with_arc(grid):
+    # backtracking search a solution (DFS) and ARC-consistency
+    # your code here
+
+    # visited and stack
+    visited, stack = set(), [grid]
+
+    # while there is a stack
+    while stack:
+        node = stack.pop()
+
+        # if all places filled
+        if all(len(value) == 1 for value in node.values()):
+            print(f"found {node}")
+            return node
+
+        # str for dictionary for visited
+        visitor = hash(frozenset(node.items()))
+
+        if visitor not in visited:
+            visited.add(visitor)
+            key, text = min(node.items(), key=lambda x: len(x[1]) if len(x[1]) > 1 else float('inf'))
+            for number in text:
+                if no_conflict(node, key, number):
+                    new_grid = node.copy()
+                    new_grid[key] = number
+                    if make_arc_consistent_recursive(new_grid, key, number):
+                        stack.append(new_grid)
+
+
+def make_arc_consistent_iterative(grid, key, value):
+    stack = []
+    while stack:
+        changed = False
+        for r in peers[key]:
+            if value in grid[r]:
+                if len(grid[r]) <= 1:
+                    return False
+                else:
+                    grid[r] = grid[r].replace(value, "")
+                    changed = True
+        if changed:
+            pass
+    return True
+
+def make_arc_consistent_recursive(grid, key, value):
+    changed = False
+    for r in peers[key]:
+        if value in grid[r]:
+            if len(grid[r]) <= 1:
+                return False
+            else:
+                grid[r] = grid[r].replace(value, "")
+                changed = True
+    if changed:
+        list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != key]
+        for cell in list_cells:
+            if not make_arc_consistent_recursive(grid, cell, grid[cell]):
+                return False
+    return True
 
 
 # minimum nr of clues for a unique solution is 17
@@ -174,7 +241,7 @@ for i, sudo in enumerate(slist):
     print(display(d))
     print(d)
     start_time = time.time()
-    found = solve(d)
+    found = solve_with_arc(d)
     end_time = time.time()
     hours, rem = divmod(end_time - start_time, 3600)
     minutes, seconds = divmod(rem, 60)

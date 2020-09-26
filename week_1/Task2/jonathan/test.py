@@ -1,11 +1,6 @@
-x = {"x": 10, "y": 15}
-z = { "y": 15, "x": 10,}
-m = x.copy()
-
-
-print(hash(frozenset(x.items())))
-print(hash(frozenset(z.items())))
-y = {"x": 10, "y": 15}
-print(hash(frozenset(y.items())))
-print(hash(frozenset(m.items())))
+print(str := '123456789')
+print([int(line) for line in str])
+bark = {"B1": "12345", "B2": "1"}
+print(list(bark["B1"]))
+print(all(len(list(value)) == 1 for value in bark.values()))
 
