@@ -113,7 +113,7 @@ def move_actions(node):
 
 
 def solve(grid):
-    # backtracking search a solution (DFS)
+    # backtracking search a solution (DFS) without arc
     # your code here
 
     # visited and stack
