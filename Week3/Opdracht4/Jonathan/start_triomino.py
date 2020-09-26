@@ -74,12 +74,15 @@ all_solutions = []
 def cover(r, row_valid, col_valid):
     # given the selected row r set related cols and rows invalid
     # appr. 75% of the time is spent in this function
+    select_row = a[r]
+    row_valid[r] = 0
+
     for e in range(len(a)):
-        if 1 in r & a[e]:
+        if 1 in select_row & a[e]:
             row_valid[e] = 0
 
-    for e in range(len(r)):
-        if r[e] == 1:
+    for e in range(len(select_row)):
+        if select_row[e] == 1:
             col_valid[e] = 0
 
 def solve(row_valid, col_valid, solution):
@@ -97,12 +100,8 @@ def solve(row_valid, col_valid, solution):
             for k in col_has_1_at[col_lowest]:
                 if row_valid_inner[k] != 0:
                     new_solution = solution_inner[:]
-                    new_row_valid = row_valid_inner[:]
-                    new_col_valid = col_valid_inner[:]
-                    select_row = a[k]
-                    new_row_valid[k] = 0
                     new_solution.append(k)
-                    cover(select_row, new_row_valid, new_col_valid)
+                    cover(k, new_row_valid := row_valid_inner[:], new_col_valid := col_valid_inner[:])
                     stack.append((new_row_valid, new_col_valid, new_solution))
 
 
