@@ -163,31 +163,32 @@ def solve_with_arc(grid):
                 if no_conflict(node, key, number):
                     new_grid = node.copy()
                     new_grid[key] = number
-                    if make_arc_consistent_recursive(new_grid, key, number):
+                    if make_arc_consistent_iterative(new_grid, key, number):
                         stack.append(new_grid)
 
 
 def make_arc_consistent_iterative(grid, key, value):
     CSP = namedtuple("pair", ["key", "value"])
     stack = [CSP(key, value)]
+    conflict = False
     while stack:
         changed = False
         node = stack.pop()
-        conflict = False
         for r in peers[node.key]:
             if node.value in grid[r]:
                 if len(grid[r]) <= 1:
                     conflict = True
                     break
                 else:
-                    grid[r] = grid[r].replace(value, "")
+                    grid[r] = grid[r].replace(node.value, "")
                     changed = True
         if changed:
             list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != node.key]
             for cell in list_cells:
                 stack.append(CSP(cell, grid[cell]))
-    if conflict:
-        return False
+
+        if conflict:
+            return True
     return True
 
 def make_arc_consistent_recursive(grid, key, value):
