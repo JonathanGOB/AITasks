@@ -95,13 +95,15 @@ def solve(row_valid, col_valid, solution):
             visited.add(visitor)
             col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]) if col_valid_inner[x] != 0 else float('inf'))
             for k in col_has_1_at[col_lowest]:
-                new_solution = solution_inner[:]
-                new_row_valid = row_valid_inner[:]
-                new_col_valid = col_valid_inner[:]
-                select_row = a[k]
-                new_solution.append(k)
-                cover(select_row, new_row_valid, new_col_valid)
-                stack.append((new_row_valid, new_col_valid, new_solution))
+                if row_valid_inner[k] != 0:
+                    new_solution = solution_inner[:]
+                    new_row_valid = row_valid_inner[:]
+                    new_col_valid = col_valid_inner[:]
+                    select_row = a[k]
+                    new_row_valid[k] = 0
+                    new_solution.append(k)
+                    cover(select_row, new_row_valid, new_col_valid)
+                    stack.append((new_row_valid, new_col_valid, new_solution))
 
 
 solve(row_valid, col_valid, [])
