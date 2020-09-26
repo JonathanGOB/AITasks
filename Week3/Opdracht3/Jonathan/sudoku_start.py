@@ -4,6 +4,9 @@ import copy
 
 
 # helper function
+from collections import namedtuple
+
+
 def cross(A, B):
     # cross product of chars in string A and chars in string B
     return [a + b for a in A for b in B]
@@ -165,18 +168,25 @@ def solve_with_arc(grid):
 
 
 def make_arc_consistent_iterative(grid, key, value):
-    stack = []
+    CSP = namedtuple("pair", ["key", "value"])
+    stack = [CSP(key, value)]
     while stack:
         changed = False
-        for r in peers[key]:
-            if value in grid[r]:
+        node = stack.pop()
+        conflict = False
+        for r in peers[node.key]:
+            if node.value in grid[r]:
                 if len(grid[r]) <= 1:
-                    return False
+                    break
                 else:
                     grid[r] = grid[r].replace(value, "")
                     changed = True
         if changed:
-            pass
+            list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != node.key]
+            for cell in list_cells:
+                stack.append(CSP(cell, grid[cell]))
+    if conflict:
+        return False
     return True
 
 def make_arc_consistent_recursive(grid, key, value):
