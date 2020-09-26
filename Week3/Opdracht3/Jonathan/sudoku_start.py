@@ -2,7 +2,6 @@ import os
 import time
 import copy
 
-
 # helper function
 from collections import namedtuple
 
@@ -182,14 +181,14 @@ def make_arc_consistent_iterative(grid, key, value):
                 else:
                     grid[r] = grid[r].replace(node.value, "")
                     changed = True
+        if conflict:
+            return True
         if changed:
             list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != node.key]
             for cell in list_cells:
                 stack.append(CSP(cell, grid[cell]))
-
-        if conflict:
-            return True
     return True
+
 
 def make_arc_consistent_recursive(grid, key, value):
     changed = False
