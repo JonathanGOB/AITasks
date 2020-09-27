@@ -93,8 +93,7 @@ def solve(row_valid, col_valid, solution):
         if all(col == 0 for col in col_valid_inner):
             all_solutions.append(solution_inner)
 
-        visitor = "".join(str(x) for x in (row_valid_inner + col_valid_inner))
-        if visitor not in visited:
+        if visitor := "".join(str(x) for x in (row_valid_inner + col_valid_inner)) not in visited:
             visited.add(visitor)
             col_lowest = min(range(len(col_has_1_at)), key=lambda x: len(col_has_1_at[x]) if col_valid_inner[x] != 0 else float('inf'))
             for k in col_has_1_at[col_lowest]:

@@ -182,7 +182,7 @@ def make_arc_consistent_iterative(grid, key, value):
                     grid[r] = grid[r].replace(node.value, "")
                     changed = True
         if conflict:
-            return True
+            return False
         if changed:
             list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != node.key]
             for cell in list_cells:
