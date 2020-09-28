@@ -5,7 +5,7 @@ VALUES = ["A", "A", "K", "K", "Q", "Q", "J", "J"]
 
 
 def generate_permutations():
-    for values in list(itertools.permutations(VALUES)):
+    for values in set(itertools.permutations(VALUES)):
         temp_board = BOARD.copy()
         for index in range(len(values)):
             temp_board[index] = values[index]  # Generate a board option
