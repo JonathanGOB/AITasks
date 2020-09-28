@@ -51,6 +51,7 @@ def check_boards():
                 valid_boards.append(board)
     return valid_boards
 
+
 def no_conflict(value, key, board):
     PASS = False
     for s in NEIGHBORS:
@@ -63,7 +64,7 @@ def no_conflict(value, key, board):
                     PASS = True
                 if board[key] == "Q" and board[check_list[n]] == "J":
                     PASS = True
-                if n == len(check_list) - 1 and PASS == False:
+                if board[check_list[n]] is None:
                     PASS = True
                 if board[key] == "A" and board[check_list[n]] == "Q":
                     PASS = False
@@ -71,8 +72,15 @@ def no_conflict(value, key, board):
                     PASS = False
     return PASS
 
+
+ITERATION = {"iteration": 0}
+
+
 def dfs_card_game(board, solutions, visited, USEABLE):
     if all(value != None for value in board.values()):
+        if len(solutions) == 0:
+            print_board(board)
+            print(ITERATION["iteration"])
         solutions.append(board)
         return solutions
 
@@ -87,6 +95,7 @@ def dfs_card_game(board, solutions, visited, USEABLE):
                         visited.append(visitor)
                         used_copy = USEABLE[:]
                         del used_copy[used_copy.index(e)]
+                        ITERATION["iteration"] += 1
                         dfs_card_game(temp_board, solutions, visited, used_copy)
     return solutions
 
