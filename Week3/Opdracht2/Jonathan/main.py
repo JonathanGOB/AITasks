@@ -57,7 +57,6 @@ def no_conflict(value, key, board):
     for s in NEIGHBORS:
         if s[0] == key:
             check_list = s[1:]
-            has_none = True
             for n in range(len(check_list)):
                 if value == "A" and board[check_list[n]] == "K":
                     PASS = True
@@ -68,9 +67,9 @@ def no_conflict(value, key, board):
                 if board[check_list[n]] is None:
                     PASS = True
                 if value == "A" and board[check_list[n]] == "Q":
-                    PASS = False
+                    return False
                 if value == board[check_list[n]]:
-                    PASS = False
+                    return False
     return PASS
 
 def check_board(board):
@@ -112,6 +111,7 @@ ITERATION = {"iteration": 0}
 def dfs_card_game(board, solutions, visited, USEABLE):
     if all(value is not None for value in board.values()) and check_board(board):
         if len(solutions) == 0:
+            print(board)
             print_board(board)
             print(ITERATION["iteration"])
         solutions.append(board)
@@ -121,13 +121,14 @@ def dfs_card_game(board, solutions, visited, USEABLE):
         if value is None:
             for e in USEABLE:
                 temp_board = board.copy()
-                temp_board[key] = e
-                if temp_board not in visited:
-                    visited.append(temp_board)
-                    used_copy = USEABLE[:]
-                    del used_copy[used_copy.index(e)]
-                    ITERATION["iteration"] += 1
-                    dfs_card_game(temp_board, solutions, visited, used_copy)
+                if no_conflict(e , key , board):
+                    temp_board[key] = e
+                    if temp_board not in visited:
+                        visited.append(temp_board)
+                        used_copy = USEABLE[:]
+                        del used_copy[used_copy.index(e)]
+                        ITERATION["iteration"] += 1
+                        dfs_card_game(temp_board, solutions, visited, used_copy)
     return solutions
 
 
@@ -144,5 +145,5 @@ def print_board(board):
     print(". . {} .".format(board[7]))
     print()
 
-
+print_result(check_boards())
 print_result(dfs_card_game(BOARD, [], [], VALUES))
