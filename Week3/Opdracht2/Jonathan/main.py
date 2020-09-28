@@ -58,17 +58,21 @@ def no_conflict(value, key, board, usable):
         if s[0] == key:
             check_list = s[1:]
             for n in range(len(check_list)):
-                if value == "A" and board[check_list[n]] == "K" or board[check_list[n]] is None and "K" in usable and usable.count("A") - 1 == usable.count("K"):
+                if value == "A" and board[check_list[n]] == "K" or board[
+                    check_list[n]] is None and "K" in usable and usable.count("A") > usable.count("K"):
                     PASS = True
-                if value == "K" and board[check_list[n]] == "Q" or board[check_list[n]] is None and "Q" in usable and usable.count("K") - 1 == usable.count("Q"):
+                if value == "K" and board[check_list[n]] == "Q" or board[
+                    check_list[n]] is None and "Q" in usable and usable.count("K") > usable.count("Q"):
                     PASS = True
-                if value == "Q" and board[check_list[n]] == "J" or board[check_list[n]] is None and "J" in usable and usable.count("Q") - 1 == usable.count("J"):
+                if value == "Q" and board[check_list[n]] == "J" or board[
+                    check_list[n]] is None and "J" in usable and usable.count("Q") > usable.count("J"):
                     PASS = True
                 if value == "A" and board[check_list[n]] == "Q":
                     return False
                 if value == board[check_list[n]]:
                     return False
     return PASS
+
 
 def check_board(board):
     A_PASS = 0
@@ -108,11 +112,11 @@ ITERATION = {"iteration": 0}
 
 def dfs_card_game(board, solutions, visited, USEABLE):
     if all(value is not None for value in board.values()) and check_board(board):
-            if len(solutions) == 0:
-                print_board(board)
-                print(ITERATION["iteration"])
-            solutions.append(board)
-            return solutions
+        if len(solutions) == 0:
+            print_board(board)
+            print(ITERATION["iteration"])
+        solutions.append(board)
+        return solutions
 
     for key, value in board.items():
         if value is None:
@@ -141,6 +145,7 @@ def print_board(board):
     print(". {} {} {}".format(board[4], board[5], board[6]))
     print(". . {} .".format(board[7]))
     print()
+
 
 print_result(check_boards())
 print_result(dfs_card_game(BOARD, [], [], VALUES))
