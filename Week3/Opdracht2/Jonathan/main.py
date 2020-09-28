@@ -4,7 +4,6 @@ BOARD = {0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
 VALUES = ["A", "A", "K", "K", "Q", "Q", "J", "J"]
 
 
-
 def generate_permutations():
     for values in list(itertools.permutations(VALUES)):
         temp_board = BOARD.copy()
@@ -52,16 +51,58 @@ def check_boards():
                 valid_boards.append(board)
     return valid_boards
 
+def no_conflict(value, key, board):
+    PASS = False
+    for s in NEIGHBORS:
+        if s[0] == key:
+            check_list = s[1:]
+            for n in range(len(check_list)):
+                if board[key] == "A" and board[check_list[n]] == "K":
+                    PASS = True
+                if board[key] == "K" and board[check_list[n]] == "Q":
+                    PASS = True
+                if board[key] == "Q" and board[check_list[n]] == "J":
+                    PASS = True
+                if n == len(check_list) - 1 and PASS == False:
+                    PASS = True
+                if board[key] == "A" and board[check_list[n]] == "Q":
+                    PASS = False
+                if value == board[check_list[n]]:
+                    PASS = False
+    return PASS
+
+def dfs_card_game(board, solutions, visited, USEABLE):
+    if all(value != None for value in board.values()):
+        solutions.append(board)
+        return solutions
+
+    for key, value in board.items():
+        if value is None:
+            for e in USEABLE:
+                temp_board = board.copy()
+                if no_conflict(e, key, temp_board):
+                    temp_board[key] = e
+                    visitor = hash(frozenset(temp_board.items()))
+                    if visitor not in visited:
+                        visited.append(visitor)
+                        used_copy = USEABLE[:]
+                        del used_copy[used_copy.index(e)]
+                        dfs_card_game(temp_board, solutions, visited, used_copy)
+    return solutions
+
 
 def print_result(boards):
     print("SOLVED {}".format(len(boards)))
     for board in boards:
-        print(". . {} .".format(board[0]))
-        print("{} {} {} .".format(board[1], board[2], board[3]))
-        print(". {} {} {}".format(board[4], board[5], board[6]))
-        print(". . {} .".format(board[7]))
-        print()
+        print_board(board)
 
 
+def print_board(board):
+    print(". . {} .".format(board[0]))
+    print("{} {} {} .".format(board[1], board[2], board[3]))
+    print(". {} {} {}".format(board[4], board[5], board[6]))
+    print(". . {} .".format(board[7]))
+    print()
 
-print_result(check_boards())
+
+print_result(dfs_card_game(BOARD, [], [], VALUES))
