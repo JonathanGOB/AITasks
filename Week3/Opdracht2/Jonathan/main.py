@@ -57,6 +57,7 @@ def no_conflict(value, key, board):
     for s in NEIGHBORS:
         if s[0] == key:
             check_list = s[1:]
+            has_none = False
             for n in range(len(check_list)):
                 if board[key] == "A" and board[check_list[n]] == "K":
                     PASS = True
@@ -65,6 +66,8 @@ def no_conflict(value, key, board):
                 if board[key] == "Q" and board[check_list[n]] == "J":
                     PASS = True
                 if board[check_list[n]] is None:
+                    has_none = True
+                if n == len(check_list) - 1 and has_none:
                     PASS = True
                 if board[key] == "A" and board[check_list[n]] == "Q":
                     PASS = False
@@ -77,7 +80,7 @@ ITERATION = {"iteration": 0}
 
 
 def dfs_card_game(board, solutions, visited, USEABLE):
-    if all(value != None for value in board.values()):
+    if all(value is not None for value in board.values()):
         if len(solutions) == 0:
             print_board(board)
             print(ITERATION["iteration"])
