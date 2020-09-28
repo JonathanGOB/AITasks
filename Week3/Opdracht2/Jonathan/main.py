@@ -126,8 +126,9 @@ def dfs_card_game(board, solutions, visited, USEABLE):
                 del used_copy[e]
                 if no_conflict(USEABLE[e], key, board, used_copy):
                     temp_board[key] = USEABLE[e]
-                    if temp_board not in visited:
-                        visited.append(temp_board)
+                    visitor = hash(frozenset(temp_board.items()))
+                    if visitor not in visited:
+                        visited.add(visitor)
                         ITERATION["iteration"] += 1
                         dfs_card_game(temp_board, solutions, visited, used_copy)
     return solutions
@@ -148,5 +149,5 @@ def print_board(board):
 
 
 print_result(check_boards())
-print_result(dfs_card_game(BOARD, [], [], VALUES))
+print_result(dfs_card_game(BOARD, [], set(), VALUES))
 print(ITERATION)
