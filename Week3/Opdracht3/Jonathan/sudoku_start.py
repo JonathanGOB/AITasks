@@ -162,7 +162,7 @@ def solve_with_arc(grid):
                 if no_conflict(node, key, number):
                     new_grid = node.copy()
                     new_grid[key] = number
-                    if make_arc_consistent_iterative(new_grid, key, number):
+                    if make_arc_consistent_recursive(new_grid, key, number):
                         stack.append(new_grid)
 
 
