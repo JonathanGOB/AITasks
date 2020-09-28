@@ -52,19 +52,17 @@ def check_boards():
     return valid_boards
 
 
-def no_conflict(value, key, board):
+def no_conflict(value, key, board, usable):
     PASS = False
     for s in NEIGHBORS:
         if s[0] == key:
             check_list = s[1:]
             for n in range(len(check_list)):
-                if value == "A" and board[check_list[n]] == "K":
+                if value == "A" and board[check_list[n]] == "K" or board[check_list[n]] is None and "K" in usable and usable.count("A") - 1 == usable.count("K"):
                     PASS = True
-                if value == "K" and board[check_list[n]] == "Q":
+                if value == "K" and board[check_list[n]] == "Q" or board[check_list[n]] is None and "Q" in usable and usable.count("K") - 1 == usable.count("Q"):
                     PASS = True
-                if value == "Q" and board[check_list[n]] == "J":
-                    PASS = True
-                if board[check_list[n]] is None:
+                if value == "Q" and board[check_list[n]] == "J" or board[check_list[n]] is None and "J" in usable and usable.count("Q") - 1 == usable.count("J"):
                     PASS = True
                 if value == "A" and board[check_list[n]] == "Q":
                     return False
@@ -120,12 +118,12 @@ def dfs_card_game(board, solutions, visited, USEABLE):
         if value is None:
             for e in range(len(USEABLE)):
                 temp_board = board.copy()
-                if no_conflict(USEABLE[e], key, board):
+                used_copy = USEABLE[:]
+                del used_copy[e]
+                if no_conflict(USEABLE[e], key, board, used_copy):
                     temp_board[key] = USEABLE[e]
                     if temp_board not in visited:
                         visited.append(temp_board)
-                        used_copy = USEABLE[:]
-                        del used_copy[e]
                         ITERATION["iteration"] += 1
                         dfs_card_game(temp_board, solutions, visited, used_copy)
     return solutions
