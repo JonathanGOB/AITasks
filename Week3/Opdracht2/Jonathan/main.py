@@ -149,3 +149,4 @@ def print_board(board):
 
 print_result(check_boards())
 print_result(dfs_card_game(BOARD, [], [], VALUES))
+print(ITERATION)
