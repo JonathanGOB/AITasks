@@ -111,7 +111,6 @@ ITERATION = {"iteration": 0}
 def dfs_card_game(board, solutions, visited, USEABLE):
     if all(value is not None for value in board.values()) and check_board(board):
         if len(solutions) == 0:
-            print(board)
             print_board(board)
             print(ITERATION["iteration"])
         solutions.append(board)
@@ -119,14 +118,14 @@ def dfs_card_game(board, solutions, visited, USEABLE):
 
     for key, value in board.items():
         if value is None:
-            for e in USEABLE:
+            for e in range(len(USEABLE)):
                 temp_board = board.copy()
-                if no_conflict(e , key , board):
-                    temp_board[key] = e
+                if no_conflict(USEABLE[e], key, board):
+                    temp_board[key] = USEABLE[e]
                     if temp_board not in visited:
                         visited.append(temp_board)
                         used_copy = USEABLE[:]
-                        del used_copy[used_copy.index(e)]
+                        del used_copy[e]
                         ITERATION["iteration"] += 1
                         dfs_card_game(temp_board, solutions, visited, used_copy)
     return solutions
