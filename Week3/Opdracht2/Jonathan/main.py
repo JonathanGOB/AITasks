@@ -57,24 +57,21 @@ def no_conflict(value, key, board):
     for s in NEIGHBORS:
         if s[0] == key:
             check_list = s[1:]
-            has_none = False
+            has_none = True
             for n in range(len(check_list)):
-                if board[key] == "A" and board[check_list[n]] == "K":
+                if value == "A" and board[check_list[n]] == "K":
                     PASS = True
-                if board[key] == "K" and board[check_list[n]] == "Q":
+                if value == "K" and board[check_list[n]] == "Q":
                     PASS = True
-                if board[key] == "Q" and board[check_list[n]] == "J":
+                if value == "Q" and board[check_list[n]] == "J":
                     PASS = True
                 if board[check_list[n]] is None:
-                    has_none = True
-                if n == len(check_list) - 1 and has_none:
                     PASS = True
-                if board[key] == "A" and board[check_list[n]] == "Q":
+                if value == "A" and board[check_list[n]] == "Q":
                     PASS = False
                 if value == board[check_list[n]]:
                     PASS = False
     return PASS
-
 
 def check_board(board):
     A_PASS = 0
@@ -124,13 +121,14 @@ def dfs_card_game(board, solutions, visited, USEABLE):
         if value is None:
             for e in USEABLE:
                 temp_board = board.copy()
-                temp_board[key] = e
-                if temp_board not in visited:
-                    visited.append(temp_board)
-                    used_copy = USEABLE[:]
-                    del used_copy[used_copy.index(e)]
-                    ITERATION["iteration"] += 1
-                    dfs_card_game(temp_board, solutions, visited, used_copy)
+                if no_conflict(e, key, temp_board):
+                    temp_board[key] = e
+                    if temp_board not in visited:
+                        visited.append(temp_board)
+                        used_copy = USEABLE[:]
+                        del used_copy[used_copy.index(e)]
+                        ITERATION["iteration"] += 1
+                        dfs_card_game(temp_board, solutions, visited, used_copy)
     return solutions
 
 
