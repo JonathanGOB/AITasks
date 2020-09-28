@@ -109,12 +109,12 @@ ITERATION = {"iteration": 0}
 
 
 def dfs_card_game(board, solutions, visited, USEABLE):
-    if all(value is not None for value in board.values()) and check_board(board):
-        if len(solutions) == 0:
-            print_board(board)
-            print(ITERATION["iteration"])
-        solutions.append(board)
-        return solutions
+    if all(value is not None for value in board.values()):
+            if len(solutions) == 0:
+                print_board(board)
+                print(ITERATION["iteration"])
+            solutions.append(board)
+            return solutions
 
     for key, value in board.items():
         if value is None:
