@@ -1,9 +1,0 @@
-Als je een aas zet in 3 dan zet je het domein op 3 op alleen 1 mogelijkheid, dat is een clue.
-Vervolgens moet er gekeken worden om de blokken omheen dat het niet aas is. Als het wel zo is haal je het uit de domein.
-Dat zijn dat de plekken 0, 2 en 5 daar haal je de aas uit.
-Daarna moet er de vrouw eruit gehaald worden, omdat je niet een vrouw mag hebben naast een aas. Dus dat maakt de domeinen
-voor plekken die de kaart grenst en de kaart is kleiner, dus weer 0, 2, 5.
-Bij de domeinen die de aas grenst weet je dan dat er geen vrouw of aas in kan en dus is het domein alleen boeren of heer.
-Dus weet je dat daar alleen boeren of moet zitten en de blokken die niet ernaast zitten alles kunnen zijn,
- behalve de aantal boeren en heren die om de aas zit. Dat maakt mogelijkheden een stuk kleiner voor dat stap die gezet
- werdt.
