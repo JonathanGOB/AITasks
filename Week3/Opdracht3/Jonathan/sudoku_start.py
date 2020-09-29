@@ -159,11 +159,10 @@ def solve_with_arc(grid):
             visited.add(visitor)
             key, text = min(node.items(), key=lambda x: len(x[1]) if len(x[1]) > 1 else float('inf'))
             for number in text:
-                if no_conflict(node, key, number):
-                    new_grid = node.copy()
-                    new_grid[key] = number
-                    if make_arc_consistent_recursive(new_grid, key, number):
-                        stack.append(new_grid)
+                new_grid = node.copy()
+                new_grid[key] = number
+                if make_arc_consistent_recursive(new_grid, key, number):
+                    stack.append(new_grid)
 
 
 def make_arc_consistent_iterative(grid, key, value):
@@ -184,7 +183,7 @@ def make_arc_consistent_iterative(grid, key, value):
         if conflict:
             return False
         if changed:
-            list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != node.key]
+            list_cells = [e for e in peers[key] if len(grid[e]) == 1 and e != node.key]
             for cell in list_cells:
                 stack.append(CSP(cell, grid[cell]))
     return True
@@ -200,7 +199,7 @@ def make_arc_consistent_recursive(grid, key, value):
                 grid[r] = grid[r].replace(value, "")
                 changed = True
     if changed:
-        list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != key]
+        list_cells = [e for e in peers[key] if len(grid[e]) == 1 and e != key]
         for cell in list_cells:
             if not make_arc_consistent_recursive(grid, cell, grid[cell]):
                 return False
