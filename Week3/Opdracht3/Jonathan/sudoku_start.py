@@ -183,7 +183,7 @@ def make_arc_consistent_iterative(grid, key, value):
         if conflict:
             return False
         if changed:
-            list_cells = [e for e in peers[key] if len(grid[e]) == 1 and e != node.key]
+            list_cells = [e for e in grid.keys() if len(grid[e]) == 1 and e != node.key]
             for cell in list_cells:
                 stack.append(CSP(cell, grid[cell]))
     return True
