@@ -1,0 +1,64 @@
+Stel 5 is een aas
+* 3, 4, 6, 7 kunnen geen aas zijn[5]
+* 3, 4, 6, 7 kunnen geen vrouw zijn[4]
+* Dus 3, 4, 6 , 7 moeten heer of boer zijn
+* Zijn maar 2x heer en 2x boer, dus 0, 1, 2 moet een aas of vrouw zijn 
+
+Stel 3 is een heer
+* 0, 2 kunnen geen heer zijn[5] (is al vastgesteld)
+
+Stel 0 is een vrouw
+- Regel 3 gaat fout
+
+Stel 0 is een aas
+* Zijn geen azen meer, dus 1, 2 moet een vrouw zijn 
+- Regel 5 gaat fout 2 vrouwen naast elkaar
+
+Stel 3 is een Boer
+* 0 kan geen A zijn[3]
+
+Stel 0 is een vrouw
+- Regel 3 gaat fout
+
+Stel 5 is een heer
+* 3, 4, 6, 7 kunnen geen heer zijn[5]
+
+Stel 3 is een aas
+* 2, 0 kunnen geen aas zijn[5]
+* 2, 0 kunnen geen vrouw zijn[4]
+
+Stel 0 is een heer
+* zijn geen heren meer dus 2 moet een boer zijn 
+
+Stel 2 is een boer
+* 1, 4 kunnen geen boer of heer zijn 
+
+Stel 1 is een aas
+- regel 1 gaat fout
+
+Stel 1 is een vrouw
+
+Stel 4 is een aas
+* Alle azen zijn op 
+
+Stel 6 is een vrouw
+- regel 3 gaat fout
+
+Stel 6 is een boer
+* Alle boeren zijn op 
+
+Stel 7 is een vrouw
+- regel 3 gaat fout
+
+Backtracking naar 4 dus er zijn weer azen en boeren
+Stel 4 is een vrouw
+* Alle vrouwen zijn op
+
+Stel 6 is een aas
+* Alle azen zijn op
+
+Stel 7 is een boer
+* Alle boeren zijn op 
+
+puzzel solved 
+
